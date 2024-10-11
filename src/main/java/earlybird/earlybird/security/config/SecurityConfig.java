@@ -62,7 +62,9 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated()
+//                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
+                        // TODO : 베타 테스트 기간에만 permitAll -> 로그인 기능 추가되면 authenticated()로 변경
                 );
 
         OAuth2AuthenticationFilter oAuth2AuthenticationFilter
@@ -81,8 +83,9 @@ public class SecurityConfig {
 
         JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(jwtUtil, userRepository);
 
-        http
-                .addFilterAfter(jwtAuthenticationFilter, OAuth2AuthenticationFilter.class);
+        // TODO: 베타 테스트 이후 살려놓기
+//        http
+//                .addFilterAfter(jwtAuthenticationFilter, OAuth2AuthenticationFilter.class);
 
         http
                 .logout(logout -> logout
