@@ -7,7 +7,9 @@ import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.DeregisterFcmMessageAtSchedulerServiceRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationStatus.COMPLETED;
 
@@ -16,20 +18,30 @@ import static earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificat
 public class DeregisterNotificationAtSchedulerService {
 
     private final FcmNotificationRepository notificationRepository;
+    private final SchedulingTaskListService schedulingTaskListService;
 
+    @Transactional
     public void deregister(DeregisterFcmMessageAtSchedulerServiceRequest request) {
         Long notificationId = request.getNotificationId();
         FcmNotification fcmNotification = notificationRepository.findById(notificationId)
                 .orElseThrow(FcmNotificationNotFoundException::new);
 
-        if (fcmNotification.getStatus().equals(COMPLETED)) {
-            throw new AlreadySentFcmNotificationException();
-        }
+        checkNotificationIsAlreadySent(fcmNotification);
+        checkDeviceTokenMismatch(request, fcmNotification);
 
+        schedulingTaskListService.remove(fcmNotification.getUuid());
+        notificationRepository.delete(fcmNotification);
+    }
+
+    private void checkDeviceTokenMismatch(DeregisterFcmMessageAtSchedulerServiceRequest request, FcmNotification fcmNotification) {
         if (!fcmNotification.getDeviceToken().equals(request.getDeviceToken())) {
             throw new FcmDeviceTokenMismatchException();
         }
+    }
 
-        notificationRepository.deleteById(notificationId);
+    private void checkNotificationIsAlreadySent(FcmNotification fcmNotification) {
+        if (fcmNotification.getStatus().equals(COMPLETED)) {
+            throw new AlreadySentFcmNotificationException();
+        }
     }
 }
