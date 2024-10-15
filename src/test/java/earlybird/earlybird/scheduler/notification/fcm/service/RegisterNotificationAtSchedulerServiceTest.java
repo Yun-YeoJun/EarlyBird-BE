@@ -1,9 +1,11 @@
 package earlybird.earlybird.scheduler.notification.fcm.service;
 
 import earlybird.earlybird.error.exception.FcmMessageTimeBeforeNowException;
+import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.SendMessageByTokenServiceRequest;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -26,6 +29,17 @@ class RegisterNotificationAtSchedulerServiceTest {
 
     @Autowired
     private RegisterNotificationAtSchedulerService registerNotificationAtSchedulerService;
+
+    @Autowired
+    private SchedulingTaskListService schedulingTaskListService;
+
+    @Autowired
+    private FcmNotificationRepository fcmNotificationRepository;
+
+    @AfterEach
+    void tearDown() {
+        fcmNotificationRepository.deleteAllInBatch();
+    }
 
     @DisplayName("FCM 메시지를 스케줄러에 등록하면 등록된 시간에 FCM 메시지 전송이 실행된다.")
     @Test
@@ -47,13 +61,14 @@ class RegisterNotificationAtSchedulerServiceTest {
         registerNotificationAtSchedulerService.registerFcmMessage(request);
 
         // then
+        assertThat(schedulingTaskListService.has(request.getUuid())).isTrue();
+
         Awaitility.await()
                 .atMost(targetSecond + 1, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
                     verify(sendMessageToFcmService,
                             times(1)).sendMessageByToken(any(SendMessageByTokenServiceRequest.class));
                 });
-
     }
 
     @DisplayName("알림 목표 시간이 현재보다 과거이면 예외가 발생한다.")

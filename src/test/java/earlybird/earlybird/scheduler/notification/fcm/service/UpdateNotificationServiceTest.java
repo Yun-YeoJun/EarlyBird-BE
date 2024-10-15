@@ -1,10 +1,12 @@
 package earlybird.earlybird.scheduler.notification.fcm.service;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import earlybird.earlybird.error.exception.AlreadySentFcmNotificationException;
 import earlybird.earlybird.error.exception.FcmDeviceTokenMismatchException;
 import earlybird.earlybird.error.exception.FcmMessageTimeBeforeNowException;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
+import earlybird.earlybird.scheduler.notification.fcm.service.request.AddTaskToSchedulingTaskListServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.UpdateFcmMessageServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.response.UpdateFcmMessageServiceResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -12,12 +14,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 
 @SpringBootTest
 class UpdateNotificationServiceTest {
@@ -28,28 +34,46 @@ class UpdateNotificationServiceTest {
     @Autowired
     private FcmNotificationRepository repository;
 
+    @Autowired
+    private SchedulingTaskListService schedulingTaskListService;
+
+    @MockBean
+    private FirebaseMessagingService firebaseMessagingService;
+
     @AfterEach
     void tearDown() {
         repository.deleteAllInBatch();
     }
 
-    @DisplayName("알림 정보를 업데이트한다.")
+    @DisplayName("알림 정보와 스케줄링 정보를 업데이트한다.")
     @Test
-    void update() {
+    void update() throws FirebaseMessagingException {
         // given
         String deviceToken = "deviceToken";
-        LocalDateTime savedTargetTime = LocalDateTime.now().minusDays(1);
+        LocalDateTime savedTargetTime = LocalDateTime.now().plusDays(1);
 
         FcmNotification notification = createFcmNotification(deviceToken, savedTargetTime);
         FcmNotification savedNotification = repository.save(notification);
 
-        LocalDateTime updatedTargetTime = LocalDateTime.now().plusDays(1).withNano(0);
+        AddTaskToSchedulingTaskListServiceRequest addRequest = AddTaskToSchedulingTaskListServiceRequest.builder()
+                .body(savedNotification.getBody())
+                .deviceToken(deviceToken)
+                .title(notification.getTitle())
+                .uuid(notification.getUuid())
+                .targetTime(savedTargetTime.atZone(ZoneId.of("Asia/Seoul")).toInstant())
+                .build();
+        schedulingTaskListService.add(addRequest);
+
+        LocalDateTime updatedTargetTime = LocalDateTime.now().plusDays(2).withNano(0);
 
         UpdateFcmMessageServiceRequest request = UpdateFcmMessageServiceRequest.builder()
                 .notificationId(savedNotification.getId())
                 .deviceToken(deviceToken)
                 .targetTime(updatedTargetTime)
                 .build();
+
+        String fcmMessageId = "fcm-message-id";
+        doReturn(fcmMessageId).when(firebaseMessagingService).send(any());
 
         // when
         UpdateFcmMessageServiceResponse response = service.update(request);
