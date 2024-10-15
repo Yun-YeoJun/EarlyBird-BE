@@ -8,6 +8,7 @@ import earlybird.earlybird.user.entity.User;
 import earlybird.earlybird.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -16,6 +17,7 @@ public class CreateAuthUserFeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public FeedbackDTO create(FeedbackDTO feedbackDTO) {
 
         Long userId = feedbackDTO.getUserAccountInfoDTO().getId();
@@ -24,6 +26,7 @@ public class CreateAuthUserFeedbackService {
 
         Feedback feedback = Feedback.builder()
                 .content(feedbackDTO.getContent())
+                .score(feedbackDTO.getScore())
                 .user(user)
                 .createdAt(feedbackDTO.getCreatedAt())
                 .build();

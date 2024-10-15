@@ -18,8 +18,11 @@ public class Feedback {
     @Id
     private Long id;
 
-    @Column(name = "feedback_content", nullable = false)
+    @Column(name = "feedback_content")
     private String content;
+
+    @Column(name = "feedback_nps_score", nullable = false)
+    private Long score;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
