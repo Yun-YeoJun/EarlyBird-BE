@@ -36,7 +36,7 @@ public class SendMessageToFcmService {
     private final FirebaseMessagingService firebaseMessagingService;
 
     @PostConstruct
-    public void init() throws IOException {
+    private void init() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(serviceAccountFilePath).getInputStream()))
@@ -50,8 +50,6 @@ public class SendMessageToFcmService {
     @Transactional
     @Async
     public CompletableFuture<SendMessageByTokenServiceResponse> sendMessageByToken(SendMessageByTokenServiceRequest request) throws FirebaseMessagingException {
-        // TODO: log.info 삭제
-        log.info("SendMessageToFcmService.sendMessageByToken");
         String fcmNotificationUuid = request.getUuid();
         FcmNotification fcmNotification = fcmNotificationRepository.findByUuid(fcmNotificationUuid)
                 .orElseThrow(NotificationNotFoundException::new);
