@@ -4,6 +4,7 @@ import earlybird.earlybird.scheduler.notification.fcm.service.request.Deregister
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,12 @@ public class DeregisterNotificationByTokenRequest {
     private Long notificationId;
     @NotBlank
     private String deviceToken;
+
+    @Builder
+    private DeregisterNotificationByTokenRequest(Long notificationId, String deviceToken) {
+        this.notificationId = notificationId;
+        this.deviceToken = deviceToken;
+    }
 
     public DeregisterFcmMessageAtSchedulerServiceRequest toServiceRequest() {
         return DeregisterFcmMessageAtSchedulerServiceRequest.builder()
