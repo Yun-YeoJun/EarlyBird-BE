@@ -49,7 +49,14 @@ public class FcmSchedulerController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deregisterTokenNotificationAtScheduler(@Valid @RequestBody DeregisterNotificationByTokenRequest request) {
+    public ResponseEntity<?> deregisterTokenNotificationAtScheduler(
+            @RequestHeader("notificationId") Long notificationId, @RequestHeader("deviceToken") String deviceToken) {
+
+        DeregisterNotificationByTokenRequest request = DeregisterNotificationByTokenRequest.builder()
+                .notificationId(notificationId)
+                .deviceToken(deviceToken)
+                .build();
+
         deregisterService.deregister(request.toServiceRequest());
         return ResponseEntity.noContent().build();
     }
