@@ -4,6 +4,7 @@ import earlybird.earlybird.error.exception.FcmMessageTimeBeforeNowException;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.SendMessageByTokenServiceRequest;
+import earlybird.earlybird.scheduler.notification.fcm.service.response.RegisterFcmMessageAtSchedulerServiceResponse;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,26 +47,23 @@ class RegisterNotificationAtSchedulerServiceTest {
 
     @DisplayName("FCM 메시지를 스케줄러에 등록하면 등록된 시간에 FCM 메시지 전송이 실행된다.")
     @Test
-    void registerFcmMessage() throws ExecutionException, InterruptedException {
+    void schedulerExecute() throws ExecutionException, InterruptedException {
         // given
-        String title = "제목";
-        String body = "메시지 바디";
-        String deviceToken = "디바이스 토큰";
         int targetSecond = 5;
         LocalDateTime targetTime = LocalDateTime.now().plusSeconds(targetSecond);
         RegisterFcmMessageAtSchedulerServiceRequest request = RegisterFcmMessageAtSchedulerServiceRequest.builder()
-                .title(title)
-                .body(body)
-                .deviceToken(deviceToken)
-                .targetTime(targetTime)
+                .clientId("clientId")
+                .deviceToken("deviceToken")
+                .appointmentName("appointmentName")
+                .preparationTime(LocalDateTime.now().minusHours(1))
+                .movingTime(LocalDateTime.now().minusHours(1))
+                .appointmentTime(LocalDateTime.now().plusSeconds(targetSecond))
                 .build();
 
         // when
         registerNotificationAtSchedulerService.registerFcmMessage(request);
 
         // then
-        assertThat(schedulingTaskListService.has(request.getUuid())).isTrue();
-
         Awaitility.await()
                 .atMost(targetSecond + 1, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
@@ -74,20 +72,44 @@ class RegisterNotificationAtSchedulerServiceTest {
                 });
     }
 
-    @DisplayName("알림 목표 시간이 현재보다 과거이면 예외가 발생한다.")
+    @DisplayName("요청한 준비 시간, 이동 시간, 약속 시간에 따라 최대 7개의 알림이 스케줄러에 등록된다.")
+    @Test
+    void registerFcmMessage() throws ExecutionException, InterruptedException {
+        // given
+        RegisterFcmMessageAtSchedulerServiceRequest request = RegisterFcmMessageAtSchedulerServiceRequest.builder()
+                .clientId("clientId")
+                .deviceToken("deviceToken")
+                .appointmentName("appointmentName")
+                .preparationTime(LocalDateTime.now().plusHours(2))
+                .movingTime(LocalDateTime.now().plusHours(3))
+                .appointmentTime(LocalDateTime.now().plusHours(4))
+                .build();
+
+        // when
+        RegisterFcmMessageAtSchedulerServiceResponse response = registerNotificationAtSchedulerService.registerFcmMessage(request);
+
+        // then
+        assertThat(response.getNotifications()).hasSize(7);
+    }
+
+    @DisplayName("알림 목표 시간이 현재보다 과거이면 알림이 등록되지 않는다.")
     @Test
     void targetTimeIsBeforeNow() {
         // given
         RegisterFcmMessageAtSchedulerServiceRequest request = RegisterFcmMessageAtSchedulerServiceRequest.builder()
-                .title("제목")
-                .body("바디")
-                .deviceToken("디바이스토큰")
-                .targetTime(LocalDateTime.now().minusSeconds(1))
+                .clientId("clientId")
+                .deviceToken("deviceToken")
+                .appointmentName("appointmentName")
+                .preparationTime(LocalDateTime.now().minusHours(1))
+                .movingTime(LocalDateTime.now().minusHours(1))
+                .appointmentTime(LocalDateTime.now().minusHours(1))
                 .build();
 
-        // when // then
-        assertThatThrownBy(() -> registerNotificationAtSchedulerService.registerFcmMessage(request))
-                .isInstanceOf(FcmMessageTimeBeforeNowException.class);
+        // when
+        RegisterFcmMessageAtSchedulerServiceResponse response = registerNotificationAtSchedulerService.registerFcmMessage(request);
+
+        // then
+        assertThat(response.getNotifications()).hasSize(0);
 
     }
 
