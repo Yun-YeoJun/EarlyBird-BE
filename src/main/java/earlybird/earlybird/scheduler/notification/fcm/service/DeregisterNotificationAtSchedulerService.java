@@ -34,7 +34,7 @@ public class DeregisterNotificationAtSchedulerService {
     }
 
     private void checkDeviceTokenMismatch(DeregisterFcmMessageAtSchedulerServiceRequest request, FcmNotification fcmNotification) {
-        if (!fcmNotification.getDeviceToken().equals(request.getDeviceToken())) {
+        if (!fcmNotification.getAppointment().getDeviceToken().equals(request.getDeviceToken())) {
             throw new FcmDeviceTokenMismatchException();
         }
     }

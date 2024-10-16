@@ -53,7 +53,7 @@ public class UpdateNotificationService {
     }
 
     private void checkFcmDeviceTokenMismatch(UpdateFcmMessageServiceRequest request, FcmNotification notification) {
-        if (!notification.getDeviceToken().equals(request.getDeviceToken()))
+        if (!notification.getAppointment().getDeviceToken().equals(request.getDeviceToken()))
             throw new FcmDeviceTokenMismatchException();
     }
 
@@ -63,7 +63,7 @@ public class UpdateNotificationService {
                 .targetTime(request.getTargetTimeInstant())
                 .title(notification.getTitle())
                 .body(notification.getBody())
-                .deviceToken(notification.getDeviceToken())
+                .deviceToken(notification.getAppointment().getDeviceToken())
                 .build();
     }
 }
