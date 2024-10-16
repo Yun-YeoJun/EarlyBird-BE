@@ -3,6 +3,8 @@ package earlybird.earlybird.scheduler.notification.fcm.service.request;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
