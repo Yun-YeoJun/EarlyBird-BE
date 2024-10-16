@@ -1,5 +1,7 @@
 package earlybird.earlybird.scheduler.notification.fcm.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -18,7 +20,13 @@ public class FcmNotification extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "fcm_notification_id")
     private Long id;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "appointment_id", nullable = false)
+    private Appointment appointment;
 
     @Column(nullable = false, unique = true)
     private String uuid;
@@ -30,28 +38,28 @@ public class FcmNotification extends BaseTimeEntity {
     private String body;
 
     @Column(nullable = false)
-    private String deviceToken;
-
-    @Column(nullable = false)
     private LocalDateTime targetTime;
 
+    @JsonIgnore
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FcmNotificationStatus status = PENDING;
 
+    @JsonIgnore
     private LocalDateTime sentTime;
 
     /**
      * FCM 에 메시지 등록 성공 후 리턴 받게 되는 message id 값
      */
+    @JsonIgnore
     private String fcmMessageId;
 
     @Builder
-    private FcmNotification(String uuid, String title, String body, String deviceToken, LocalDateTime targetTime) {
+    private FcmNotification(String uuid, Appointment appointment, String title, String body, LocalDateTime targetTime) {
         this.uuid = uuid;
+        this.appointment = appointment;
         this.title = title;
         this.body = body;
-        this.deviceToken = deviceToken;
         this.targetTime = targetTime;
     }
 
