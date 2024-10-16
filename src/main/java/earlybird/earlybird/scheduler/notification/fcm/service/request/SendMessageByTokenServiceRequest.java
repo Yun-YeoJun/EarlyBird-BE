@@ -18,15 +18,6 @@ public class SendMessageByTokenServiceRequest {
         this.uuid = uuid;
     }
 
-//    public static SendMessageByTokenServiceRequest from(RegisterFcmMessageAtSchedulerServiceRequest request) {
-//        return SendMessageByTokenServiceRequest.builder()
-//                .title(request.getTitle())
-//                .body(request.getBody())
-//                .deviceToken(request.getDeviceToken())
-//                .uuid(request.getUuid())
-//                .build();
-//    }
-
     public static SendMessageByTokenServiceRequest from(AddTaskToSchedulingTaskListServiceRequest request) {
         return SendMessageByTokenServiceRequest.builder()
                 .title(request.getTitle())

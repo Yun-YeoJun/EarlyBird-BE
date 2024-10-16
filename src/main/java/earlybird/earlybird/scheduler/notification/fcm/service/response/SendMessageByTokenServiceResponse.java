@@ -42,7 +42,7 @@ public class SendMessageByTokenServiceResponse {
                 .uuid(fcmNotification.getUuid())
                 .title(fcmNotification.getTitle())
                 .body(fcmNotification.getBody())
-                .deviceToken(fcmNotification.getDeviceToken())
+                .deviceToken(fcmNotification.getAppointment().getDeviceToken())
                 .targetTime(fcmNotification.getTargetTime())
                 .status(fcmNotification.getStatus())
                 .fcmMessageId(fcmNotification.getFcmMessageId())

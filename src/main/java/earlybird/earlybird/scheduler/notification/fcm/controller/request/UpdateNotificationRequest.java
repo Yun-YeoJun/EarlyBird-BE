@@ -2,6 +2,7 @@ package earlybird.earlybird.scheduler.notification.fcm.controller.request;
 
 import earlybird.earlybird.scheduler.notification.fcm.service.request.UpdateFcmMessageServiceRequest;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 @Getter
 public class UpdateNotificationRequest {
 
-    @NotBlank
+    @NotNull
     private Long notificationId;
     @NotBlank
     private String deviceToken;

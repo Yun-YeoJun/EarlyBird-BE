@@ -11,36 +11,43 @@ import java.util.UUID;
 
 @Getter
 public class RegisterFcmMessageAtSchedulerServiceRequest {
-    private String title;
-    private String body;
+    private String clientId;
     private String deviceToken;
-    private LocalDateTime targetTime;
-    private String uuid;
+    private String appointmentName;
+    private LocalDateTime appointmentTime;
+    private LocalDateTime preparationTime;
+    private LocalDateTime movingTime;
 
     @Builder
-    private RegisterFcmMessageAtSchedulerServiceRequest(String title, String body, String deviceToken, LocalDateTime targetTime) {
-        this.title = title;
-        this.body = body;
+    private RegisterFcmMessageAtSchedulerServiceRequest(String clientId, String deviceToken, String appointmentName,
+                            LocalDateTime appointmentTime, LocalDateTime preparationTime, LocalDateTime movingTime) {
+        this.clientId = clientId;
         this.deviceToken = deviceToken;
-        this.targetTime = targetTime;
-        setUuid();
+        this.appointmentName = appointmentName;
+        this.appointmentTime = appointmentTime;
+        this.preparationTime = preparationTime;
+        this.movingTime = movingTime;
     }
 
-    private void setUuid() {
-        this.uuid = UUID.randomUUID().toString();
+    public Instant getAppointmentTimeInstant() {
+        return appointmentTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
     }
 
-    public Instant getTargetTimeInstant() {
-        return targetTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
+    public Instant getPreparationTimeInstant() {
+        return preparationTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
     }
 
-    public FcmNotification toFcmNotification() {
-        return FcmNotification.builder()
-                .uuid(uuid)
-                .title(title)
-                .body(body)
-                .deviceToken(deviceToken)
-                .targetTime(targetTime)
-                .build();
+    public Instant getMovingTimeInstant() {
+        return movingTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
     }
+
+//    public FcmNotification toFcmNotification() {
+//        return FcmNotification.builder()
+//                .uuid(uuid)
+//                .title(title)
+//                .body(body)
+//                .deviceToken(deviceToken)
+//                .targetTime(targetTime)
+//                .build();
+//    }
 }
