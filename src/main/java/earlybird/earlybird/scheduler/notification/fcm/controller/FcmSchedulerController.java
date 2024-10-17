@@ -29,7 +29,7 @@ public class FcmSchedulerController {
     @PostMapping
     public ResponseEntity<?> registerTokenNotification(@Valid @RequestBody RegisterNotificationByTokenRequest request) throws FirebaseMessagingException {
         RegisterFcmMessageAtSchedulerServiceResponse serviceResponse = registerService
-                .registerFcmMessage(request.toRegisterFcmMessageAtSchedulerRequest());
+                .registerFcmMessageForNewAppointment(request.toRegisterFcmMessageForNewAppointmentAtSchedulerRequest());
 
         RegisterNotificationByTokenResponse controllerResponse = RegisterNotificationByTokenResponse.from(serviceResponse);
 
@@ -50,11 +50,11 @@ public class FcmSchedulerController {
 
     @DeleteMapping
     public ResponseEntity<?> deregisterTokenNotificationAtScheduler(
-            @RequestHeader("notificationId") Long notificationId, @RequestHeader("deviceToken") String deviceToken) {
+            @RequestHeader("appointmentId") Long appointmentId, @RequestHeader("clientId") String clientId) {
 
         DeregisterNotificationByTokenRequest request = DeregisterNotificationByTokenRequest.builder()
-                .notificationId(notificationId)
-                .deviceToken(deviceToken)
+                .appointmentId(appointmentId)
+                .clientId(clientId)
                 .build();
 
         deregisterService.deregister(request.toServiceRequest());
