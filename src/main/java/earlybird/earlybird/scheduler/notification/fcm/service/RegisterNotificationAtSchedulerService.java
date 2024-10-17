@@ -5,7 +5,8 @@ import earlybird.earlybird.appointment.domain.AppointmentRepository;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.AddTaskToSchedulingTaskListServiceRequest;
-import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageAtSchedulerServiceRequest;
+import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest;
+import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.response.RegisterFcmMessageAtSchedulerServiceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,11 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -25,26 +23,31 @@ import java.util.UUID;
 @Service
 public class RegisterNotificationAtSchedulerService {
 
-    private final FcmNotificationRepository fcmNotificationRepository;
     private final AppointmentRepository appointmentRepository;
     private final SchedulingTaskListService schedulingTaskListService;
 
     @Transactional
-    public RegisterFcmMessageAtSchedulerServiceResponse registerFcmMessage(RegisterFcmMessageAtSchedulerServiceRequest request) {
-        Instant appointmentTimeInstant = request.getAppointmentTimeInstant();
-        Instant preparationTimeInstant = request.getPreparationTimeInstant();
-        Instant movingTimeInstant = request.getMovingTimeInstant();
-
-        Appointment appointment = createAppointmentBy(request);
-        String deviceToken = request.getDeviceToken();
-        String clientId = request.getClientId();
-
-        registerAll(preparationTimeInstant, appointment, clientId, deviceToken, movingTimeInstant, appointmentTimeInstant);
-
-        return RegisterFcmMessageAtSchedulerServiceResponse.of(appointment);
+    public RegisterFcmMessageAtSchedulerServiceResponse registerFcmMessageForNewAppointment(RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request) {
+        return registerFcmMessageForExistingAppointment(
+                RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest.from(request,createAppointmentBy(request))
+        );
     }
 
-    private Appointment createAppointmentBy(RegisterFcmMessageAtSchedulerServiceRequest request) {
+    @Transactional
+    public RegisterFcmMessageAtSchedulerServiceResponse registerFcmMessageForExistingAppointment(RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest request) {
+        registerAll(
+                request.getPreparationTimeInstant(),
+                request.getMovingTimeInstant(),
+                request.getAppointmentTimeInstant(),
+                request.getAppointment(),
+                request.getClientId(),
+                request.getDeviceToken()
+        );
+
+        return RegisterFcmMessageAtSchedulerServiceResponse.of(request.getAppointment());
+    }
+
+    private Appointment createAppointmentBy(RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request) {
         Appointment appointment = Appointment.builder()
                 .appointmentName(request.getAppointmentName())
                 .clientId(request.getClientId())
@@ -54,12 +57,12 @@ public class RegisterNotificationAtSchedulerService {
         return appointment;
     }
 
-    private void registerAll(Instant preparationTimeInstant, Appointment appointment, String clientId, String deviceToken, Instant movingTimeInstant, Instant appointmentTimeInstant) {
+    private void registerAll(Instant preparationTimeInstant, Instant movingTimeInstant, Instant appointmentTimeInstant, Appointment appointment, String clientId, String deviceToken) {
         // 준비 시작 1시간 전
         register(
                 preparationTimeInstant.minus(1, ChronoUnit.HOURS),
                 appointment,
-                appointment.getAppointmentName() + " 준비 시작까지 1시간 남았어요!",
+                appointment.getAppointmentName() + " 준비 1시간 전!",
                 "오늘의 준비사항을 확인해봐요 \uD83D\uDE0A",
                 clientId,
                 deviceToken
@@ -89,7 +92,7 @@ public class RegisterNotificationAtSchedulerService {
         register(
                 movingTimeInstant.minus(10, ChronoUnit.MINUTES),
                 appointment,
-                "10분 후에 이동해야 안늦어요!",
+                "10분 후에 이동해야 안 늦어요!",
                 "교통정보를 미리 확인해보세요  \uD83D\uDEA5",
                 clientId,
                 deviceToken

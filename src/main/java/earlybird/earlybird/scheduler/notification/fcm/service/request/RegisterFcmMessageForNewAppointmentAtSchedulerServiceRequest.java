@@ -1,16 +1,14 @@
 package earlybird.earlybird.scheduler.notification.fcm.service.request;
 
-import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.UUID;
 
 @Getter
-public class RegisterFcmMessageAtSchedulerServiceRequest {
+public class RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest {
     private String clientId;
     private String deviceToken;
     private String appointmentName;
@@ -19,8 +17,8 @@ public class RegisterFcmMessageAtSchedulerServiceRequest {
     private LocalDateTime movingTime;
 
     @Builder
-    private RegisterFcmMessageAtSchedulerServiceRequest(String clientId, String deviceToken, String appointmentName,
-                            LocalDateTime appointmentTime, LocalDateTime preparationTime, LocalDateTime movingTime) {
+    private RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest(String clientId, String deviceToken, String appointmentName,
+                                                                         LocalDateTime appointmentTime, LocalDateTime preparationTime, LocalDateTime movingTime) {
         this.clientId = clientId;
         this.deviceToken = deviceToken;
         this.appointmentName = appointmentName;
@@ -41,13 +39,4 @@ public class RegisterFcmMessageAtSchedulerServiceRequest {
         return movingTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
     }
 
-//    public FcmNotification toFcmNotification() {
-//        return FcmNotification.builder()
-//                .uuid(uuid)
-//                .title(title)
-//                .body(body)
-//                .deviceToken(deviceToken)
-//                .targetTime(targetTime)
-//                .build();
-//    }
 }
