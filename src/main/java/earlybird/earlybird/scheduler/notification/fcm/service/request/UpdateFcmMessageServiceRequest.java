@@ -1,6 +1,5 @@
 package earlybird.earlybird.scheduler.notification.fcm.service.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,11 +10,24 @@ import java.time.ZoneId;
 @Builder
 @Getter
 public class UpdateFcmMessageServiceRequest {
-    private Long notificationId;
-    private String deviceToken;
-    private LocalDateTime targetTime;
 
-    public Instant getTargetTimeInstant() {
-        return targetTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
+    private Long appointmentId;
+    private String appointmentName;
+    private String clientId;
+    private String deviceToken;
+    private LocalDateTime preparationTime;
+    private LocalDateTime movingTime;
+    private LocalDateTime appointmentTime;
+
+    public Instant getAppointmentTimeInstant() {
+        return appointmentTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
+    }
+
+    public Instant getPreparationTimeInstant() {
+        return preparationTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
+    }
+
+    public Instant getMovingTimeInstant() {
+        return movingTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
     }
 }
