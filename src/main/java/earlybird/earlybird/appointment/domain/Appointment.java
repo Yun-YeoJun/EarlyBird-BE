@@ -49,4 +49,12 @@ public class Appointment {
         this.clientId = clientId;
         this.deviceToken = deviceToken;
     }
+
+    public void changeAppointmentName(String newName) {
+        appointmentName = newName;
+    }
+
+    public void changeDeviceToken(String newToken) {
+        deviceToken = newToken;
+    }
 }
