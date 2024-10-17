@@ -8,25 +8,28 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class DeregisterNotificationByTokenRequest {
 
-    @NotNull
-    private Long notificationId;
     @NotBlank
-    private String deviceToken;
+    private String clientId;
+    @NotNull
+    private Long appointmentId;
 
     @Builder
-    private DeregisterNotificationByTokenRequest(Long notificationId, String deviceToken) {
-        this.notificationId = notificationId;
-        this.deviceToken = deviceToken;
+    public DeregisterNotificationByTokenRequest(String clientId, Long appointmentId) {
+        this.clientId = clientId;
+        this.appointmentId = appointmentId;
     }
 
     public DeregisterFcmMessageAtSchedulerServiceRequest toServiceRequest() {
         return DeregisterFcmMessageAtSchedulerServiceRequest.builder()
-                .notificationId(notificationId)
-                .deviceToken(deviceToken)
+                .optionalAppointment(Optional.empty())
+                .appointmentId(appointmentId)
+                .clientId(clientId)
                 .build();
     }
 }
