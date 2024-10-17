@@ -76,4 +76,8 @@ public class FcmNotification extends BaseTimeEntity {
     private void changeStatusToCompleted() {
         this.status = COMPLETED;
     }
+
+    public void updateToCancelled() {
+        this.status = CANCELLED;
+    }
 }
