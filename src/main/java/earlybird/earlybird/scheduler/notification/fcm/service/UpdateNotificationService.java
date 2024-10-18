@@ -4,6 +4,7 @@ import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.appointment.domain.AppointmentRepository;
 import earlybird.earlybird.error.exception.AppointmentNotFoundException;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
+import earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.DeregisterFcmMessageAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.UpdateFcmMessageServiceRequest;
@@ -30,7 +31,7 @@ public class UpdateNotificationService {
         Appointment appointment = findAppointmentBy(appointmentId, request.getClientId());
 
         deregisterNotificationAtSchedulerService.deregister(
-                createDeregisterServiceRequest(appointmentId, appointment, clientId)
+                createDeregisterServiceRequest(appointmentId, clientId)
         );
 
         registerNotificationAtSchedulerService.registerFcmMessageForExistingAppointment(
@@ -44,17 +45,16 @@ public class UpdateNotificationService {
     }
 
     private DeregisterFcmMessageAtSchedulerServiceRequest createDeregisterServiceRequest(
-            Long appointmentId, Appointment appointment, String clientId
+            Long appointmentId, String clientId
     ) {
         return DeregisterFcmMessageAtSchedulerServiceRequest.builder()
                 .appointmentId(appointmentId)
-                .optionalAppointment(Optional.of(appointment))
                 .clientId(clientId)
+                .targetNotificationStatus(NotificationStatus.MODIFIED)
                 .build();
     }
 
     private Appointment findAppointmentBy(Long appointmentId, String clientId) {
-        // TODO: 예외 추가
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(AppointmentNotFoundException::new);
 
