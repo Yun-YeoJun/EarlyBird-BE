@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-import static earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationStatus.*;
+import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,19 +20,15 @@ public class FcmNotification extends BaseTimeEntity {
     @Column(name = "fcm_notification_id")
     private Long id;
 
+    @Setter
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
 
-    @Column(nullable = false, unique = true)
-    private String uuid;
-
-    @Column(nullable = false, columnDefinition = "VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-    private String title;
-
-    @Column(nullable = false, columnDefinition = "VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-    private String body;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private NotificationStep notificationStep;
 
     @Column(nullable = false)
     private LocalDateTime targetTime;
@@ -43,7 +36,7 @@ public class FcmNotification extends BaseTimeEntity {
     @JsonIgnore
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private FcmNotificationStatus status = PENDING;
+    private NotificationStatus status = PENDING;
 
     @JsonIgnore
     private LocalDateTime sentTime;
@@ -55,11 +48,9 @@ public class FcmNotification extends BaseTimeEntity {
     private String fcmMessageId;
 
     @Builder
-    private FcmNotification(String uuid, Appointment appointment, String title, String body, LocalDateTime targetTime) {
-        this.uuid = uuid;
+    private FcmNotification(Appointment appointment, NotificationStep notificationStep, LocalDateTime targetTime) {
         this.appointment = appointment;
-        this.title = title;
-        this.body = body;
+        this.notificationStep = notificationStep;
         this.targetTime = targetTime;
     }
 
@@ -77,7 +68,7 @@ public class FcmNotification extends BaseTimeEntity {
         this.status = COMPLETED;
     }
 
-    public void updateToCancelled() {
-        this.status = CANCELLED;
+    public void updateStatusTo(NotificationStatus status) {
+        this.status = status;
     }
 }
