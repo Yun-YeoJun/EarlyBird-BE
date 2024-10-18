@@ -2,11 +2,9 @@ package earlybird.earlybird.scheduler.notification.fcm.service.response;
 
 import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
-import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationStatus;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
