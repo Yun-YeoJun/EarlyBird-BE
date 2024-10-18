@@ -1,29 +1,38 @@
 package earlybird.earlybird.scheduler.notification.fcm.service.request;
 
+import earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStep;
 import lombok.Builder;
 import lombok.Getter;
+
+import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStep.ONE_HOUR_BEFORE_PREPARATION_TIME;
 
 @Getter
 public class SendMessageByTokenServiceRequest {
     private String title;
     private String body;
     private String deviceToken;
-    private String uuid;
+    private Long notificationId;
 
     @Builder
-    private SendMessageByTokenServiceRequest(String title, String body, String deviceToken, String uuid) {
+    private SendMessageByTokenServiceRequest(String title, String body, String deviceToken, Long notificationId) {
         this.title = title;
         this.body = body;
         this.deviceToken = deviceToken;
-        this.uuid = uuid;
+        this.notificationId = notificationId;
     }
 
     public static SendMessageByTokenServiceRequest from(AddTaskToSchedulingTaskListServiceRequest request) {
+
+        NotificationStep notificationStep = request.getNotificationStep();
+        String appointmentName = request.getAppointment().getAppointmentName();
+        String title = (notificationStep.equals(ONE_HOUR_BEFORE_PREPARATION_TIME))
+                ? appointmentName + notificationStep.getTitle() : notificationStep.getTitle();
+
         return SendMessageByTokenServiceRequest.builder()
-                .title(request.getTitle())
-                .body(request.getBody())
+                .title(title)
+                .body(notificationStep.getBody())
                 .deviceToken(request.getDeviceToken())
-                .uuid(request.getUuid())
+                .notificationId(request.getNotificationId())
                 .build();
     }
 }

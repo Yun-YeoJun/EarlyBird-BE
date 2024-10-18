@@ -4,10 +4,13 @@ import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.appointment.domain.AppointmentRepository;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
+import earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStep;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.AddTaskToSchedulingTaskListServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.response.RegisterFcmMessageAtSchedulerServiceResponse;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.UUID;
+
+import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStep.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,12 +28,15 @@ import java.util.UUID;
 public class RegisterNotificationAtSchedulerService {
 
     private final AppointmentRepository appointmentRepository;
+    private final FcmNotificationRepository fcmNotificationRepository;
     private final SchedulingTaskListService schedulingTaskListService;
 
     @Transactional
     public RegisterFcmMessageAtSchedulerServiceResponse registerFcmMessageForNewAppointment(RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request) {
+        Appointment newAppointment = createAppointmentBy(request);
+
         return registerFcmMessageForExistingAppointment(
-                RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest.from(request,createAppointmentBy(request))
+                RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest.from(request, newAppointment)
         );
     }
 
@@ -62,8 +69,7 @@ public class RegisterNotificationAtSchedulerService {
         register(
                 preparationTimeInstant.minus(1, ChronoUnit.HOURS),
                 appointment,
-                appointment.getAppointmentName() + " 준비 1시간 전!",
-                "오늘의 준비사항을 확인해봐요 \uD83D\uDE0A",
+                ONE_HOUR_BEFORE_PREPARATION_TIME,
                 clientId,
                 deviceToken
         );
@@ -72,8 +78,7 @@ public class RegisterNotificationAtSchedulerService {
         register(
                 preparationTimeInstant.minus(5, ChronoUnit.MINUTES),
                 appointment,
-                "5분 후에 준비 시작해야 해요!",
-                "허겁지겁 준비하면 후회해요! \uD83E\uDEE2",
+                FIVE_MINUTES_BEFORE_PREPARATION_TIME,
                 clientId,
                 deviceToken
         );
@@ -82,8 +87,7 @@ public class RegisterNotificationAtSchedulerService {
         register(
                 preparationTimeInstant,
                 appointment,
-                "지금 준비 시작 안하면 늦어요 ❗\uFE0F❗\uFE0F❗\uFE0F",
-                "같이 5초 세고, 시작해봐요!",
+                PREPARATION_TIME,
                 clientId,
                 deviceToken
         );
@@ -92,8 +96,7 @@ public class RegisterNotificationAtSchedulerService {
         register(
                 movingTimeInstant.minus(10, ChronoUnit.MINUTES),
                 appointment,
-                "10분 후에 이동해야 안 늦어요!",
-                "교통정보를 미리 확인해보세요  \uD83D\uDEA5",
+                TEN_MINUTES_BEFORE_MOVING_TIME,
                 clientId,
                 deviceToken
         );
@@ -102,8 +105,7 @@ public class RegisterNotificationAtSchedulerService {
         register(
                 movingTimeInstant,
                 appointment,
-                "지금 출발해야 안늦어요 ❗\uFE0F❗\uFE0F❗\uFE0F",
-                "준비사항 다 체크하셨나요?",
+                MOVING_TIME,
                 clientId,
                 deviceToken
         );
@@ -112,8 +114,7 @@ public class RegisterNotificationAtSchedulerService {
         register(
                 appointmentTimeInstant.minus(5, ChronoUnit.MINUTES),
                 appointment,
-                "약속장소에 도착하셨나요?!",
-                "도착하셨으면 확인버튼을 눌러주세요! \uD83E\uDD29",
+                FIVE_MINUTES_BEFORE_APPOINTMENT_TIME,
                 clientId,
                 deviceToken
         );
@@ -122,37 +123,26 @@ public class RegisterNotificationAtSchedulerService {
         register(
                 appointmentTimeInstant,
                 appointment,
-                "1분 안에 확인버튼을 눌러주세요!!",
-                "안 누르면 지각처리돼요!!! \uD83D\uDEAB\uD83D\uDEAB\uD83D\uDEAB",
+                APPOINTMENT_TIME,
                 clientId,
                 deviceToken
         );
     }
 
 
-    private void register(Instant targetTime, Appointment appointment, String title, String body, String clientId, String deviceToken) {
+    private void register(Instant targetTime, Appointment appointment, NotificationStep notificationStep, String clientId, String deviceToken) {
         if (checkTimeBeforeNow(targetTime)) {
             return;
         }
 
+        FcmNotification notification = createFcmNotification(targetTime, appointment, notificationStep);
+        appointment.addFcmNotification(notification);
+        fcmNotificationRepository.save(notification);
+
         AddTaskToSchedulingTaskListServiceRequest addTaskRequest =
-                createAddTaskRequest(targetTime, appointment, title, body, deviceToken);
-        String notificationUuid = addTaskRequest.getUuid();
+                createAddTaskRequest(notification.getId(), targetTime, appointment, notificationStep, deviceToken);
 
         schedulingTaskListService.add(addTaskRequest);
-
-        FcmNotification notification = createFcmNotification(targetTime, appointment, title, body, clientId, deviceToken, notificationUuid);
-        appointment.addFcmNotification(notification);
-    }
-
-    private FcmNotification createFcmNotification(Instant targetTime, Appointment appointment, String title, String body, String clientId, String deviceToken, String notificationUuid) {
-        return FcmNotification.builder()
-                .appointment(appointment)
-                .targetTime(targetTime.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime())
-                .title(title)
-                .body(body)
-                .uuid(notificationUuid)
-                .build();
     }
 
     private boolean checkTimeBeforeNow(Instant time) {
@@ -160,14 +150,21 @@ public class RegisterNotificationAtSchedulerService {
     }
 
     private AddTaskToSchedulingTaskListServiceRequest createAddTaskRequest(
-            Instant targetTime, Appointment appointment, String title, String body, String deviceToken) {
+            Long notificationId, Instant targetTime, Appointment appointment, NotificationStep notificationStep, String deviceToken) {
         return AddTaskToSchedulingTaskListServiceRequest.builder()
-                .uuid(UUID.randomUUID().toString())
+                .notificationId(notificationId)
                 .targetTime(targetTime)
                 .appointment(appointment)
-                .title(title)
+                .notificationStep(notificationStep)
                 .deviceToken(deviceToken)
-                .body(body)
+                .build();
+    }
+
+    private FcmNotification createFcmNotification(Instant targetTime, Appointment appointment, NotificationStep notificationStep) {
+        return FcmNotification.builder()
+                .appointment(appointment)
+                .targetTime(targetTime.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime())
+                .notificationStep(notificationStep)
                 .build();
     }
 }
