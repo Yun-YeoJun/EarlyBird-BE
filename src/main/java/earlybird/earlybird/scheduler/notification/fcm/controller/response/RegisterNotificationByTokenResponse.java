@@ -1,15 +1,11 @@
 package earlybird.earlybird.scheduler.notification.fcm.controller.response;
 
 import earlybird.earlybird.appointment.domain.Appointment;
-import earlybird.earlybird.scheduler.notification.fcm.controller.request.RegisterNotificationByTokenRequest;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
-import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationStatus;
 import earlybird.earlybird.scheduler.notification.fcm.service.response.RegisterFcmMessageAtSchedulerServiceResponse;
-import earlybird.earlybird.scheduler.notification.fcm.service.response.SendMessageByTokenServiceResponse;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
