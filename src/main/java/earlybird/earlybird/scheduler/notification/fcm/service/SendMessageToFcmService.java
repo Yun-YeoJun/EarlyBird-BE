@@ -50,8 +50,8 @@ public class SendMessageToFcmService {
     @Transactional
     @Async
     public CompletableFuture<SendMessageByTokenServiceResponse> sendMessageByToken(SendMessageByTokenServiceRequest request) throws FirebaseMessagingException {
-        String fcmNotificationUuid = request.getUuid();
-        FcmNotification fcmNotification = fcmNotificationRepository.findByUuid(fcmNotificationUuid)
+        Long notificationId = request.getNotificationId();
+        FcmNotification fcmNotification = fcmNotificationRepository.findById(notificationId)
                 .orElseThrow(NotificationNotFoundException::new);
 
         String messageId = null;
