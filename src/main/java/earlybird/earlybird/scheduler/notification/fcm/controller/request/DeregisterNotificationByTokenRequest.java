@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Optional;
+import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus.CANCELLED;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -27,9 +27,9 @@ public class DeregisterNotificationByTokenRequest {
 
     public DeregisterFcmMessageAtSchedulerServiceRequest toServiceRequest() {
         return DeregisterFcmMessageAtSchedulerServiceRequest.builder()
-                .optionalAppointment(Optional.empty())
                 .appointmentId(appointmentId)
                 .clientId(clientId)
+                .targetNotificationStatus(CANCELLED)
                 .build();
     }
 }
