@@ -36,7 +36,8 @@ public class Appointment {
     private List<FcmNotification> fcmNotifications = new ArrayList<>();
 
     public void addFcmNotification(FcmNotification fcmNotification) {
-        fcmNotifications.add(fcmNotification);
+        this.fcmNotifications.add(fcmNotification);
+        fcmNotification.setAppointment(this);
     }
 
     public void removeFcmNotification(FcmNotification fcmNotification) {
