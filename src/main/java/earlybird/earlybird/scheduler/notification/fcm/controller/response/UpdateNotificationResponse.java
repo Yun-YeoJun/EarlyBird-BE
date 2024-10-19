@@ -6,7 +6,6 @@ import earlybird.earlybird.scheduler.notification.fcm.service.response.UpdateFcm
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter

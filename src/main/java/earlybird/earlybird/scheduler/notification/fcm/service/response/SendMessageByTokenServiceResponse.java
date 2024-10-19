@@ -37,7 +37,6 @@ public class SendMessageByTokenServiceResponse {
                 .deviceToken(fcmNotification.getAppointment().getDeviceToken())
                 .targetTime(fcmNotification.getTargetTime())
                 .status(fcmNotification.getStatus())
-                .fcmMessageId(fcmNotification.getFcmMessageId())
                 .build();
     }
 }

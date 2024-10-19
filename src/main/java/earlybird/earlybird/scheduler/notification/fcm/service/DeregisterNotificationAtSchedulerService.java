@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus.MODIFIED;
 import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus.PENDING;
 
 @RequiredArgsConstructor

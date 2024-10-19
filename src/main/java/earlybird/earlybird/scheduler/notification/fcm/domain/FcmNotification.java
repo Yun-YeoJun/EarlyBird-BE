@@ -41,12 +41,6 @@ public class FcmNotification extends BaseTimeEntity {
     @JsonIgnore
     private LocalDateTime sentTime;
 
-    /**
-     * FCM 에 메시지 등록 성공 후 리턴 받게 되는 message id 값
-     */
-    @JsonIgnore
-    private String fcmMessageId;
-
     @Builder
     private FcmNotification(Appointment appointment, NotificationStep notificationStep, LocalDateTime targetTime) {
         this.appointment = appointment;
@@ -54,14 +48,9 @@ public class FcmNotification extends BaseTimeEntity {
         this.targetTime = targetTime;
     }
 
-    public void onSendToFcmSuccess(String fcmMessageId) {
-        this.fcmMessageId = fcmMessageId;
+    public void onSendToFcmSuccess() {
         this.sentTime = LocalDateTime.now();
         changeStatusToCompleted();
-    }
-
-    public void updateTargetTime(LocalDateTime targetTime) {
-        this.targetTime = targetTime;
     }
 
     private void changeStatusToCompleted() {
