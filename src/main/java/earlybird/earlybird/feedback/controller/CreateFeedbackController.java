@@ -1,11 +1,15 @@
 package earlybird.earlybird.feedback.controller;
 
-import earlybird.earlybird.feedback.service.CreateAnonymousUserFeedbackService;
-import earlybird.earlybird.feedback.service.CreateAuthUserFeedbackService;
-import earlybird.earlybird.feedback.dto.FeedbackDTO;
-import earlybird.earlybird.feedback.dto.FeedbackRequestDTO;
+import earlybird.earlybird.feedback.controller.request.CreateFeedbackCommentRequest;
+import earlybird.earlybird.feedback.controller.request.CreateFeedbackScoreRequest;
+import earlybird.earlybird.feedback.service.anonymous.CreateAnonymousFeedbackCommentService;
+import earlybird.earlybird.feedback.service.anonymous.CreateAnonymousFeedbackScoreService;
+import earlybird.earlybird.feedback.service.anonymous.request.CreateAnonymousFeedbackScoreServiceRequest;
+import earlybird.earlybird.feedback.service.auth.CreateAuthFeedbackCommentService;
+import earlybird.earlybird.feedback.service.anonymous.request.CreateAnonymousFeedbackCommentServiceRequest;
+import earlybird.earlybird.feedback.service.auth.request.CreateAuthFeedbackCommentServiceRequest;
 import earlybird.earlybird.security.authentication.oauth2.user.OAuth2UserDetails;
-import earlybird.earlybird.user.dto.UserAccountInfoDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,40 +18,43 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/feedbacks")
 @RestController
 public class CreateFeedbackController {
 
-    private final CreateAuthUserFeedbackService createAuthUserFeedbackService;
-    private final CreateAnonymousUserFeedbackService createAnonymousUserFeedbackService;
+    private final CreateAuthFeedbackCommentService createAuthFeedbackCommentService;
+    private final CreateAnonymousFeedbackCommentService createAnonymousFeedbackCommentService;
+    private final CreateAnonymousFeedbackScoreService createAnonymousFeedbackScoreService;
 
-    @PostMapping
-    public ResponseEntity<?> createFeedback(
+    @PostMapping("/comments")
+    public ResponseEntity<?> createFeedbackComment(
             @AuthenticationPrincipal OAuth2UserDetails oAuth2UserDetails,
-            @RequestBody FeedbackRequestDTO requestDTO) {
+            @Valid @RequestBody CreateFeedbackCommentRequest request) {
 
         if (oAuth2UserDetails != null) {
-            createAuthUserFeedback(oAuth2UserDetails, requestDTO);
+            CreateAuthFeedbackCommentServiceRequest serviceRequest
+                    = CreateAuthFeedbackCommentServiceRequest.of(oAuth2UserDetails, request);
+            createAuthFeedbackCommentService.create(serviceRequest);
         }
+
         else {
-            createAnonymousUserFeedback(requestDTO);
+            CreateAnonymousFeedbackCommentServiceRequest serviceRequest
+                    = CreateAnonymousFeedbackCommentServiceRequest.of(request);
+            createAnonymousFeedbackCommentService.create(serviceRequest);
         }
 
         return ResponseEntity.ok().build();
     }
 
-    private void createAuthUserFeedback(OAuth2UserDetails oAuth2UserDetails, FeedbackRequestDTO requestDTO) {
-        FeedbackDTO feedbackDTO = FeedbackDTO.of(oAuth2UserDetails, requestDTO);
-        createAuthUserFeedbackService.create(feedbackDTO);
-    }
+    // TODO: 베타 테스트 이후 로그인 사용자의 피드백 받는 기능 구현
+    @PostMapping("/scores")
+    public ResponseEntity<?> createFeedbackScore(@Valid @RequestBody CreateFeedbackScoreRequest request) {
 
-    private void createAnonymousUserFeedback(FeedbackRequestDTO requestDTO) {
-        FeedbackDTO feedbackDTO = FeedbackDTO.of(requestDTO);
-        createAnonymousUserFeedbackService.create(feedbackDTO);
+        CreateAnonymousFeedbackScoreServiceRequest serviceRequest = CreateAnonymousFeedbackScoreServiceRequest.of(request);
+        createAnonymousFeedbackScoreService.create(serviceRequest);
+
+        return ResponseEntity.ok().build();
     }
 
 }
