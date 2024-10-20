@@ -50,11 +50,7 @@ public class FcmNotification extends BaseTimeEntity {
 
     public void onSendToFcmSuccess() {
         this.sentTime = LocalDateTime.now();
-        changeStatusToCompleted();
-    }
-
-    private void changeStatusToCompleted() {
-        this.status = COMPLETED;
+        updateStatusTo(COMPLETED);
     }
 
     public void updateStatusTo(NotificationStatus status) {
