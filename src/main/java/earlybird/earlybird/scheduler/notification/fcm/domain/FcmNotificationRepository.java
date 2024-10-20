@@ -13,7 +13,6 @@ import java.util.Optional;
 public interface FcmNotificationRepository extends JpaRepository<FcmNotification, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "10000")})
     @Query("SELECT n FROM FcmNotification n WHERE n.id = :id AND n.status = :status")
     Optional<FcmNotification> findByIdAndStatusForUpdate(@Param("id") Long id, @Param("status") NotificationStatus status);
 }
