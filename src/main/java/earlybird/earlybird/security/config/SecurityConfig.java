@@ -67,7 +67,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/feedbacks").permitAll()
+                        .requestMatchers("/api/v1/feedbacks/comments", "/api/v1/feedbacks/scores").permitAll()
                         .anyRequest().authenticated()
                 );
 
