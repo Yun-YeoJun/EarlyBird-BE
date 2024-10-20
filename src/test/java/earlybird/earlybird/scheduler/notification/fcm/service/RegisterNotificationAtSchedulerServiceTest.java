@@ -1,8 +1,7 @@
 package earlybird.earlybird.scheduler.notification.fcm.service;
 
-import earlybird.earlybird.error.exception.FcmMessageTimeBeforeNowException;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
-import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageAtSchedulerServiceRequest;
+import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.SendMessageByTokenServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.response.RegisterFcmMessageAtSchedulerServiceResponse;
 import org.awaitility.Awaitility;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,7 +18,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -49,9 +46,9 @@ class RegisterNotificationAtSchedulerServiceTest {
     @Test
     void schedulerExecute() throws ExecutionException, InterruptedException {
         // given
-        int targetSecond = 5;
+        int targetSecond = 2;
         LocalDateTime targetTime = LocalDateTime.now().plusSeconds(targetSecond);
-        RegisterFcmMessageAtSchedulerServiceRequest request = RegisterFcmMessageAtSchedulerServiceRequest.builder()
+        RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request = RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest.builder()
                 .clientId("clientId")
                 .deviceToken("deviceToken")
                 .appointmentName("appointmentName")
@@ -61,7 +58,7 @@ class RegisterNotificationAtSchedulerServiceTest {
                 .build();
 
         // when
-        registerNotificationAtSchedulerService.registerFcmMessage(request);
+        registerNotificationAtSchedulerService.registerFcmMessageForNewAppointment(request);
 
         // then
         Awaitility.await()
@@ -74,9 +71,9 @@ class RegisterNotificationAtSchedulerServiceTest {
 
     @DisplayName("요청한 준비 시간, 이동 시간, 약속 시간에 따라 최대 7개의 알림이 스케줄러에 등록된다.")
     @Test
-    void registerFcmMessage() throws ExecutionException, InterruptedException {
+    void registerFcmMessageForNewAppointment() throws ExecutionException, InterruptedException {
         // given
-        RegisterFcmMessageAtSchedulerServiceRequest request = RegisterFcmMessageAtSchedulerServiceRequest.builder()
+        RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request = RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest.builder()
                 .clientId("clientId")
                 .deviceToken("deviceToken")
                 .appointmentName("appointmentName")
@@ -86,7 +83,7 @@ class RegisterNotificationAtSchedulerServiceTest {
                 .build();
 
         // when
-        RegisterFcmMessageAtSchedulerServiceResponse response = registerNotificationAtSchedulerService.registerFcmMessage(request);
+        RegisterFcmMessageAtSchedulerServiceResponse response = registerNotificationAtSchedulerService.registerFcmMessageForNewAppointment(request);
 
         // then
         assertThat(response.getNotifications()).hasSize(7);
@@ -96,7 +93,7 @@ class RegisterNotificationAtSchedulerServiceTest {
     @Test
     void targetTimeIsBeforeNow() {
         // given
-        RegisterFcmMessageAtSchedulerServiceRequest request = RegisterFcmMessageAtSchedulerServiceRequest.builder()
+        RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request = RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest.builder()
                 .clientId("clientId")
                 .deviceToken("deviceToken")
                 .appointmentName("appointmentName")
@@ -106,11 +103,10 @@ class RegisterNotificationAtSchedulerServiceTest {
                 .build();
 
         // when
-        RegisterFcmMessageAtSchedulerServiceResponse response = registerNotificationAtSchedulerService.registerFcmMessage(request);
+        RegisterFcmMessageAtSchedulerServiceResponse response = registerNotificationAtSchedulerService.registerFcmMessageForNewAppointment(request);
 
         // then
         assertThat(response.getNotifications()).hasSize(0);
-
     }
 
 }
