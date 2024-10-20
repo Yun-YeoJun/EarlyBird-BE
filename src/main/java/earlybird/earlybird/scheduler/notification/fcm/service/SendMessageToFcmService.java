@@ -4,26 +4,20 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.*;
-import earlybird.earlybird.error.exception.NotificationNotFoundException;
-import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
 import earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.SendMessageByTokenServiceRequest;
-import earlybird.earlybird.scheduler.notification.fcm.service.response.SendMessageByTokenServiceResponse;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
