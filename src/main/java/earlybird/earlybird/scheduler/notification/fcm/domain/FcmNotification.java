@@ -3,10 +3,12 @@ package earlybird.earlybird.scheduler.notification.fcm.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.common.BaseTimeEntity;
+import earlybird.earlybird.common.LocalDateTimeUtil;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus.*;
 
@@ -49,7 +51,7 @@ public class FcmNotification extends BaseTimeEntity {
     }
 
     public void onSendToFcmSuccess() {
-        this.sentTime = LocalDateTime.now();
+        this.sentTime = LocalDateTimeUtil.getLocalDateTimeNow();
         updateStatusTo(COMPLETED);
     }
 
