@@ -9,6 +9,7 @@ public enum NotificationStatus {
 
     PENDING("전송 대기 중"),
     COMPLETED("전송 완료"),
+    FAILED("전송 실패"),
     MODIFIED("변경됨"),
     CANCELLED("취소");
 

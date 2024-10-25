@@ -53,6 +53,11 @@ public class FcmNotification extends BaseTimeEntity {
         updateStatusTo(COMPLETED);
     }
 
+    public void onSendToFcmFailure() {
+        this.sentTime = null;
+        updateStatusTo(FAILED);
+    }
+
     public void updateStatusTo(NotificationStatus status) {
         this.status = status;
     }
