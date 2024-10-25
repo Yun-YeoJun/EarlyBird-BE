@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 
 import javax.naming.AuthenticationException;
 
+
 public class GoogleOAuth2UserInfoProxy implements OAuth2UserInfoProxy {
     @Override
     public OAuth2ServerResponse getOAuth2UserInfo(String accessToken) {

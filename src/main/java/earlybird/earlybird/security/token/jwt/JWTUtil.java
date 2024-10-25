@@ -1,4 +1,4 @@
-package earlybird.earlybird.security.jwt;
+package earlybird.earlybird.security.token.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

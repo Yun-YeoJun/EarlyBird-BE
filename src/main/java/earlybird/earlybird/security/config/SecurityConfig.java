@@ -5,13 +5,17 @@ import earlybird.earlybird.security.authentication.jwt.reissue.JWTReissueAuthent
 import earlybird.earlybird.security.authentication.jwt.reissue.JWTReissueAuthenticationProvider;
 import earlybird.earlybird.security.authentication.oauth2.OAuth2AuthenticationFilter;
 import earlybird.earlybird.security.authentication.oauth2.OAuth2AuthenticationProvider;
+import earlybird.earlybird.security.authentication.oauth2.user.OAuth2UserDetails;
 import earlybird.earlybird.security.authentication.oauth2.user.OAuth2UserJoinService;
-import earlybird.earlybird.security.jwt.JWTUtil;
-import earlybird.earlybird.security.jwt.access.CreateAccessTokenService;
-import earlybird.earlybird.security.jwt.refresh.CreateRefreshTokenService;
-import earlybird.earlybird.security.jwt.refresh.RefreshTokenRepository;
-import earlybird.earlybird.security.jwt.refresh.RefreshTokenToCookieService;
-import earlybird.earlybird.security.jwt.refresh.SaveRefreshTokenService;
+import earlybird.earlybird.security.token.jwt.JWTUtil;
+import earlybird.earlybird.security.token.jwt.access.CreateJWTAccessTokenService;
+import earlybird.earlybird.security.token.jwt.refresh.CreateJWTRefreshTokenService;
+import earlybird.earlybird.security.token.jwt.refresh.JWTRefreshTokenRepository;
+import earlybird.earlybird.security.token.jwt.refresh.JWTRefreshTokenToCookieService;
+import earlybird.earlybird.security.token.jwt.refresh.SaveJWTRefreshTokenService;
+import earlybird.earlybird.security.token.oauth2.service.CreateOAuth2TokenService;
+import earlybird.earlybird.security.token.oauth2.service.DeleteOAuth2TokenService;
+import earlybird.earlybird.user.dto.UserAccountInfoDTO;
 import earlybird.earlybird.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +33,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -40,15 +43,17 @@ import java.util.Collections;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final JWTRefreshTokenRepository JWTRefreshTokenRepository;
     private final UserDetailsService userDetailsService;
     private final OAuth2UserJoinService oAuth2UserJoinService;
-    private final CreateAccessTokenService createAccessTokenService;
-    private final CreateRefreshTokenService createRefreshTokenService;
-    private final RefreshTokenToCookieService refreshTokenToCookieService;
+    private final CreateJWTAccessTokenService createJWTAccessTokenService;
+    private final CreateJWTRefreshTokenService createJWTRefreshTokenService;
+    private final JWTRefreshTokenToCookieService JWTRefreshTokenToCookieService;
     private final JWTUtil jwtUtil;
     private final UserRepository userRepository;
-    private final SaveRefreshTokenService saveRefreshTokenService;
+    private final SaveJWTRefreshTokenService saveJWTRefreshTokenService;
+    private final CreateOAuth2TokenService createOAuth2TokenService;
+    private final DeleteOAuth2TokenService deleteOAuth2TokenService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -68,14 +73,14 @@ public class SecurityConfig {
                 );
 
         OAuth2AuthenticationFilter oAuth2AuthenticationFilter
-                = new OAuth2AuthenticationFilter(createAccessTokenService, createRefreshTokenService, refreshTokenToCookieService);
+                = new OAuth2AuthenticationFilter(createJWTAccessTokenService, createJWTRefreshTokenService, JWTRefreshTokenToCookieService, createOAuth2TokenService, deleteOAuth2TokenService);
         oAuth2AuthenticationFilter.setAuthenticationManager(authenticationManager);
 
         http
                 .addFilterAt(oAuth2AuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         JWTReissueAuthenticationFilter jwtReissueAuthenticationFilter
-                = new JWTReissueAuthenticationFilter(createAccessTokenService, createRefreshTokenService, refreshTokenRepository, saveRefreshTokenService, refreshTokenToCookieService);
+                = new JWTReissueAuthenticationFilter(createJWTAccessTokenService, createJWTRefreshTokenService, JWTRefreshTokenRepository, saveJWTRefreshTokenService, JWTRefreshTokenToCookieService);
         ProviderManager jwtReissueAuthFilterProviderManager = new ProviderManager(new JWTReissueAuthenticationProvider(jwtUtil, userRepository));
         jwtReissueAuthenticationFilter.setAuthenticationManager(jwtReissueAuthFilterProviderManager);
 
@@ -91,7 +96,8 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/api/v1/logout", "POST"))
                         .logoutSuccessHandler(((request, response, authentication) -> {
-
+                            UserAccountInfoDTO userInfo = ((OAuth2UserDetails) authentication.getPrincipal()).getUserAccountInfoDTO();
+                            deleteOAuth2TokenService.deleteByUserAccountInfoDTO(userInfo);
                         }))
                         .deleteCookies("JSESSIONID", "refresh")
                         .invalidateHttpSession(true)
@@ -102,7 +108,7 @@ public class SecurityConfig {
                             for (Cookie cookie : cookies) {
                                 if (cookie.getName().equals("refresh")) {
                                     String refresh = cookie.getValue();
-                                    refreshTokenRepository.deleteByRefreshToken(refresh);
+                                    JWTRefreshTokenRepository.deleteByRefreshToken(refresh);
                                 }
                             }
                         }))

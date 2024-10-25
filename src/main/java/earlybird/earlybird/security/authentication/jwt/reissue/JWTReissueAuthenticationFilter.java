@@ -1,12 +1,11 @@
 package earlybird.earlybird.security.authentication.jwt.reissue;
 
-import earlybird.earlybird.security.jwt.access.CreateAccessTokenService;
-import earlybird.earlybird.security.jwt.refresh.CreateRefreshTokenService;
-import earlybird.earlybird.security.jwt.refresh.RefreshTokenRepository;
-import earlybird.earlybird.security.jwt.refresh.RefreshTokenToCookieService;
-import earlybird.earlybird.security.jwt.refresh.SaveRefreshTokenService;
+import earlybird.earlybird.security.token.jwt.access.CreateJWTAccessTokenService;
+import earlybird.earlybird.security.token.jwt.refresh.CreateJWTRefreshTokenService;
+import earlybird.earlybird.security.token.jwt.refresh.JWTRefreshTokenRepository;
+import earlybird.earlybird.security.token.jwt.refresh.JWTRefreshTokenToCookieService;
+import earlybird.earlybird.security.token.jwt.refresh.SaveJWTRefreshTokenService;
 import earlybird.earlybird.user.dto.UserAccountInfoDTO;
-import earlybird.earlybird.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -24,25 +23,25 @@ import java.util.Optional;
 
 public class JWTReissueAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/api/v1/reissue", "POST");
-    private final CreateRefreshTokenService createRefreshTokenService;
-    private final CreateAccessTokenService createAccessTokenService;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final SaveRefreshTokenService saveRefreshTokenService;
-    private final RefreshTokenToCookieService refreshTokenToCookieService;
+    private final CreateJWTRefreshTokenService createJWTRefreshTokenService;
+    private final CreateJWTAccessTokenService createJWTAccessTokenService;
+    private final JWTRefreshTokenRepository JWTRefreshTokenRepository;
+    private final SaveJWTRefreshTokenService saveJWTRefreshTokenService;
+    private final JWTRefreshTokenToCookieService JWTRefreshTokenToCookieService;
 
     public JWTReissueAuthenticationFilter(
-            CreateAccessTokenService createAccessTokenService,
-            CreateRefreshTokenService createRefreshTokenService,
-            RefreshTokenRepository refreshTokenRepository,
-            SaveRefreshTokenService saveRefreshTokenService,
-            RefreshTokenToCookieService refreshTokenToCookieService
+            CreateJWTAccessTokenService createJWTAccessTokenService,
+            CreateJWTRefreshTokenService createJWTRefreshTokenService,
+            JWTRefreshTokenRepository JWTRefreshTokenRepository,
+            SaveJWTRefreshTokenService saveJWTRefreshTokenService,
+            JWTRefreshTokenToCookieService JWTRefreshTokenToCookieService
     ) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
-        this.createAccessTokenService = createAccessTokenService;
-        this.createRefreshTokenService = createRefreshTokenService;
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.saveRefreshTokenService = saveRefreshTokenService;
-        this.refreshTokenToCookieService = refreshTokenToCookieService;
+        this.createJWTAccessTokenService = createJWTAccessTokenService;
+        this.createJWTRefreshTokenService = createJWTRefreshTokenService;
+        this.JWTRefreshTokenRepository = JWTRefreshTokenRepository;
+        this.saveJWTRefreshTokenService = saveJWTRefreshTokenService;
+        this.JWTRefreshTokenToCookieService = JWTRefreshTokenToCookieService;
     }
 
     @Override
@@ -71,8 +70,8 @@ public class JWTReissueAuthenticationFilter extends AbstractAuthenticationProces
         String accountId = userInfo.getAccountId();
         String role = userInfo.getRole();
 
-        String newAccessToken = createAccessTokenService.createAccessToken(userInfo, (long) accessTokenExpiredMs);
-        String newRefreshToken = createRefreshTokenService.createRefreshToken(userInfo, (long) refreshTokenExpiredMs);
+        String newAccessToken = createJWTAccessTokenService.createAccessToken(userInfo, (long) accessTokenExpiredMs);
+        String newRefreshToken = createJWTRefreshTokenService.createRefreshToken(userInfo, (long) refreshTokenExpiredMs);
 
         String oldRefreshToken = Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals("refresh"))
@@ -80,9 +79,9 @@ public class JWTReissueAuthenticationFilter extends AbstractAuthenticationProces
                 .get()
                 .getValue();
 
-        refreshTokenRepository.deleteByRefreshToken(oldRefreshToken);
+        JWTRefreshTokenRepository.deleteByRefreshToken(oldRefreshToken);
 
         response.setHeader("access", newAccessToken);
-        response.addCookie(refreshTokenToCookieService.createCookie(newRefreshToken, refreshTokenExpiredMs));
+        response.addCookie(JWTRefreshTokenToCookieService.createCookie(newRefreshToken, refreshTokenExpiredMs));
     }
 }

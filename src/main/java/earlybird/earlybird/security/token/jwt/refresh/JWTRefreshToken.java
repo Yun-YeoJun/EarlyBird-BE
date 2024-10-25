@@ -1,4 +1,4 @@
-package earlybird.earlybird.security.jwt.refresh;
+package earlybird.earlybird.security.token.jwt.refresh;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class RefreshToken {
+public class JWTRefreshToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,11 +16,11 @@ public class RefreshToken {
     private String refreshToken;
     private String expiration;
 
-    public RefreshToken() {
+    public JWTRefreshToken() {
 
     }
 
-    public RefreshToken(String accountId, String refreshToken, String expiration) {
+    public JWTRefreshToken(String accountId, String refreshToken, String expiration) {
         this.accountId = accountId;
         this.refreshToken = refreshToken;
         this.expiration = expiration;

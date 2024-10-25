@@ -1,7 +1,7 @@
 package earlybird.earlybird.security.authentication.jwt;
 
 import earlybird.earlybird.security.authentication.oauth2.user.OAuth2UserDetails;
-import earlybird.earlybird.security.jwt.JWTUtil;
+import earlybird.earlybird.security.token.jwt.JWTUtil;
 import earlybird.earlybird.user.dto.UserAccountInfoDTO;
 import earlybird.earlybird.user.entity.User;
 import earlybird.earlybird.user.repository.UserRepository;

@@ -1,16 +1,16 @@
-package earlybird.earlybird.security.jwt.refresh;
+package earlybird.earlybird.security.token.jwt.refresh;
 
-import earlybird.earlybird.security.jwt.JWTUtil;
+import earlybird.earlybird.security.token.jwt.JWTUtil;
 import earlybird.earlybird.user.dto.UserAccountInfoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class CreateRefreshTokenService {
+public class CreateJWTRefreshTokenService {
 
     private final JWTUtil jwtUtil;
-    private final SaveRefreshTokenService saveRefreshTokenService;
+    private final SaveJWTRefreshTokenService saveJWTRefreshTokenService;
 
     public String createRefreshToken(UserAccountInfoDTO userDTO, final Long expiredMs) {
         String accountId = userDTO.getAccountId();
@@ -18,7 +18,7 @@ public class CreateRefreshTokenService {
 
         String refresh = jwtUtil.createJwt("refresh", accountId, role, expiredMs);
 
-        saveRefreshTokenService.saveRefreshToken(accountId, refresh, expiredMs);
+        saveJWTRefreshTokenService.saveJWTRefreshToken(accountId, refresh, expiredMs);
 
         return refresh;
     }
