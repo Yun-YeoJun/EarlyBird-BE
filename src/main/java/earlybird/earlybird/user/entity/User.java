@@ -1,5 +1,6 @@
 package earlybird.earlybird.user.entity;
 
+import earlybird.earlybird.common.LocalDateTimeUtil;
 import earlybird.earlybird.security.authentication.oauth2.dto.OAuth2ServerResponse;
 import earlybird.earlybird.user.dto.UserAccountInfoDTO;
 import jakarta.persistence.*;
@@ -51,7 +52,7 @@ public class User {
         this.name = userInfo.getName();
         this.email = userInfo.getEmail();
         this.role = "USER";
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTimeUtil.getLocalDateTimeNow();
     }
 
     public User() {

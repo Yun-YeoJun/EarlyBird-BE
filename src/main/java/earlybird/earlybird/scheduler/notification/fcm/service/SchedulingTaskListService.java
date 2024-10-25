@@ -1,6 +1,7 @@
 package earlybird.earlybird.scheduler.notification.fcm.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+import earlybird.earlybird.common.LocalDateTimeUtil;
 import earlybird.earlybird.error.exception.FcmNotificationNotFoundException;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.AddTaskToSchedulingTaskListServiceRequest;
@@ -12,8 +13,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
@@ -35,7 +35,8 @@ public class SchedulingTaskListService {
     private void init() {
         fcmNotificationRepository.findAll().stream()
                 .filter(notification -> notification.getStatus().equals(PENDING))
-                .filter(notification -> notification.getTargetTime().isAfter(LocalDateTime.now()))
+                .filter(notification -> notification.getTargetTime()
+                        .isAfter(LocalDateTimeUtil.getLocalDateTimeNow()))
                 .map(AddTaskToSchedulingTaskListServiceRequest::of)
                 .forEach(this::add);
     }
@@ -44,6 +45,10 @@ public class SchedulingTaskListService {
     public void add(AddTaskToSchedulingTaskListServiceRequest request) {
         Long notificationId = request.getNotificationId();
         Instant targetTime = request.getTargetTime();
+
+        if (targetTime.isBefore(getNowInstant()))
+            return;
+
         SendMessageByTokenServiceRequest sendRequest = SendMessageByTokenServiceRequest.from(request);
 
         ScheduledFuture<?> schedule = taskScheduler.schedule(() -> {
@@ -56,6 +61,10 @@ public class SchedulingTaskListService {
         }, targetTime);
 
         notificationIdAndScheduleFutureMap.put(notificationId, schedule);
+    }
+
+    private Instant getNowInstant() {
+        return ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toInstant();
     }
 
     @Transactional
