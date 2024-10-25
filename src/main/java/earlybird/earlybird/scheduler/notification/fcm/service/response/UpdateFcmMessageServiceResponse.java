@@ -2,6 +2,7 @@ package earlybird.earlybird.scheduler.notification.fcm.service.response;
 
 import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
+import earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,7 +19,11 @@ public class UpdateFcmMessageServiceResponse {
     public static UpdateFcmMessageServiceResponse of(Appointment appointment) {
         return UpdateFcmMessageServiceResponse.builder()
                 .appointment(appointment)
-                .notifications(appointment.getFcmNotifications())
+                .notifications(
+                        appointment.getFcmNotifications().stream()
+                                .filter(notification -> notification.getStatus().equals(NotificationStatus.PENDING))
+                                .toList()
+                )
                 .build();
     }
 }
