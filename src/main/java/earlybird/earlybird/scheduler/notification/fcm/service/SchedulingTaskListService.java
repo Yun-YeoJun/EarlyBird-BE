@@ -71,7 +71,7 @@ public class SchedulingTaskListService {
     public void remove(Long notificationId) {
         ScheduledFuture<?> scheduledFuture = notificationIdAndScheduleFutureMap.get(notificationId);
         if (scheduledFuture == null) {
-            throw new FcmNotificationNotFoundException();
+            return;
         }
         scheduledFuture.cancel(false);
         notificationIdAndScheduleFutureMap.remove(notificationId);
