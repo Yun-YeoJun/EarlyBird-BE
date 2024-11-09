@@ -1,6 +1,7 @@
 package earlybird.earlybird.appointment.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import earlybird.earlybird.common.BaseTimeEntity;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -14,7 +15,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Appointment {
+public class Appointment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

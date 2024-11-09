@@ -1,10 +1,12 @@
 package earlybird.earlybird.scheduler.notification.fcm.controller.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import earlybird.earlybird.scheduler.notification.fcm.domain.NotificationUpdateType;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.UpdateFcmMessageServiceRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -29,6 +31,8 @@ public class UpdateNotificationRequest {
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime movingTime;
+    @NotNull
+    private NotificationUpdateType updateType;
 
     public UpdateFcmMessageServiceRequest toServiceRequest() {
         return UpdateFcmMessageServiceRequest.builder()
@@ -39,6 +43,7 @@ public class UpdateNotificationRequest {
                 .preparationTime(preparationTime)
                 .movingTime(movingTime)
                 .appointmentTime(appointmentTime)
+                .updateType(updateType)
                 .build();
     }
 }

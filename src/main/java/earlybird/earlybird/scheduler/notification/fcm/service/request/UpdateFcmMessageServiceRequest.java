@@ -1,5 +1,6 @@
 package earlybird.earlybird.scheduler.notification.fcm.service.request;
 
+import earlybird.earlybird.scheduler.notification.fcm.domain.NotificationUpdateType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,6 +19,8 @@ public class UpdateFcmMessageServiceRequest {
     private LocalDateTime preparationTime;
     private LocalDateTime movingTime;
     private LocalDateTime appointmentTime;
+    private NotificationUpdateType updateType;
+
 
     public Instant getAppointmentTimeInstant() {
         return appointmentTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();

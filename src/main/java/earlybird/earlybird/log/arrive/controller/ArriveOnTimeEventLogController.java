@@ -1,0 +1,26 @@
+package earlybird.earlybird.log.arrive.controller;
+
+import earlybird.earlybird.log.arrive.controller.request.ArriveOnTimeEventLoggingRequest;
+import earlybird.earlybird.log.arrive.service.ArriveOnTimeEventLogService;
+import earlybird.earlybird.log.arrive.service.request.ArriveOnTimeEventLoggingServiceRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/log/arrive-on-time-event")
+@RestController
+public class ArriveOnTimeEventLogController {
+
+    private final ArriveOnTimeEventLogService arriveOnTimeEventLogService;
+
+    @PostMapping
+    public ResponseEntity<?> createLog(@Valid @RequestBody ArriveOnTimeEventLoggingRequest request) {
+
+        ArriveOnTimeEventLoggingServiceRequest serviceRequest = new ArriveOnTimeEventLoggingServiceRequest(request.getAppointmentId());
+        arriveOnTimeEventLogService.create(serviceRequest);
+
+        return ResponseEntity.ok().build();
+    }
+}

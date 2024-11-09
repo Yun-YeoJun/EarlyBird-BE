@@ -11,12 +11,18 @@ import java.util.List;
 @Getter
 public class UpdateNotificationResponse {
 
-    private final Appointment appointment;
+    private final Long appointmentId;
+    private final String appointmentName;
+    private final String clientId;
+    private final String deviceToken;
     private final List<FcmNotification> notifications;
 
     @Builder
     public UpdateNotificationResponse(Appointment appointment, List<FcmNotification> notifications) {
-        this.appointment = appointment;
+        this.appointmentId = appointment.getId();
+        this.appointmentName = appointment.getAppointmentName();
+        this.clientId = appointment.getClientId();
+        this.deviceToken = appointment.getDeviceToken();
         this.notifications = notifications;
     }
 

@@ -4,6 +4,7 @@ import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.appointment.domain.AppointmentRepository;
 import earlybird.earlybird.error.exception.AppointmentNotFoundException;
 import earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus;
+import earlybird.earlybird.scheduler.notification.fcm.domain.NotificationUpdateType;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.DeregisterFcmMessageAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.fcm.service.request.UpdateFcmMessageServiceRequest;
@@ -11,6 +12,8 @@ import earlybird.earlybird.scheduler.notification.fcm.service.response.UpdateFcm
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationUpdateType.POSTPONE;
 
 @RequiredArgsConstructor
 @Service
@@ -26,9 +29,10 @@ public class UpdateNotificationService {
         Long appointmentId = request.getAppointmentId();
         String clientId = request.getClientId();
         Appointment appointment = findAppointmentBy(appointmentId, request.getClientId());
+        NotificationUpdateType updateType = request.getUpdateType();
 
         deregisterNotificationAtSchedulerService.deregister(
-                createDeregisterServiceRequest(appointmentId, clientId)
+                createDeregisterServiceRequest(appointmentId, clientId, updateType)
         );
 
         registerNotificationAtSchedulerService.registerFcmMessageForExistingAppointment(
@@ -42,12 +46,18 @@ public class UpdateNotificationService {
     }
 
     private DeregisterFcmMessageAtSchedulerServiceRequest createDeregisterServiceRequest(
-            Long appointmentId, String clientId
+            Long appointmentId, String clientId, NotificationUpdateType updateType
     ) {
+        NotificationStatus targetStatus;
+        if (updateType.equals(POSTPONE))
+            targetStatus = NotificationStatus.POSTPONE;
+        else
+            targetStatus = NotificationStatus.MODIFIED;
+
         return DeregisterFcmMessageAtSchedulerServiceRequest.builder()
                 .appointmentId(appointmentId)
                 .clientId(clientId)
-                .targetNotificationStatus(NotificationStatus.MODIFIED)
+                .targetNotificationStatus(targetStatus)
                 .build();
     }
 
