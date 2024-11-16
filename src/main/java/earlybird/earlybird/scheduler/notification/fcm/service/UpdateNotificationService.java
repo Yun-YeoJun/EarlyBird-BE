@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationUpdateType.POSTPONE;
+import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationUpdateType.*;
 
 @RequiredArgsConstructor
 @Service
@@ -51,8 +51,10 @@ public class UpdateNotificationService {
         NotificationStatus targetStatus;
         if (updateType.equals(POSTPONE))
             targetStatus = NotificationStatus.POSTPONE;
-        else
+        else if (updateType.equals(MODIFY))
             targetStatus = NotificationStatus.MODIFIED;
+        else
+            throw new IllegalArgumentException("Invalid update type: " + updateType);
 
         return DeregisterFcmMessageAtSchedulerServiceRequest.builder()
                 .appointmentId(appointmentId)

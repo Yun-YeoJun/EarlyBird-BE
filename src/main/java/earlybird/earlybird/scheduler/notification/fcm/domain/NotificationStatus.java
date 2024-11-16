@@ -12,7 +12,8 @@ public enum NotificationStatus {
     FAILED("전송 실패"),
     MODIFIED("변경됨"),
     POSTPONE("미뤄짐"),
-    CANCELLED("취소");
+    CANCELLED("취소"),
+    CANCELLED_BY_ARRIVE_ON_TIME("정시 도착");
 
     private final String text;
 }

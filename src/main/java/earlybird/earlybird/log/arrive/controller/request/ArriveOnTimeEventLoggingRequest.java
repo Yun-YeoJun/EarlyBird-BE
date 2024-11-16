@@ -13,4 +13,7 @@ public class ArriveOnTimeEventLoggingRequest {
 
     @NotNull
     private Long appointmentId;
+
+    @NotBlank
+    private String clientId;
 }

@@ -1,8 +1,13 @@
 package earlybird.earlybird.log.arrive.controller;
 
+import earlybird.earlybird.appointment.domain.AppointmentRepository;
 import earlybird.earlybird.log.arrive.controller.request.ArriveOnTimeEventLoggingRequest;
 import earlybird.earlybird.log.arrive.service.ArriveOnTimeEventLogService;
 import earlybird.earlybird.log.arrive.service.request.ArriveOnTimeEventLoggingServiceRequest;
+import earlybird.earlybird.scheduler.notification.fcm.service.UpdateNotificationAtArriveOnTimeService;
+import earlybird.earlybird.scheduler.notification.fcm.service.request.DeregisterFcmMessageAtSchedulerServiceRequest;
+import earlybird.earlybird.scheduler.notification.fcm.service.request.UpdateFcmMessageServiceRequest;
+import earlybird.earlybird.scheduler.notification.fcm.service.request.UpdateNotificationAtArriveOnTimeServiceRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +19,22 @@ import org.springframework.web.bind.annotation.*;
 public class ArriveOnTimeEventLogController {
 
     private final ArriveOnTimeEventLogService arriveOnTimeEventLogService;
+    private final UpdateNotificationAtArriveOnTimeService updateNotificationAtArriveOnTimeService;
 
     @PostMapping
-    public ResponseEntity<?> createLog(@Valid @RequestBody ArriveOnTimeEventLoggingRequest request) {
+    public ResponseEntity<?> arriveOnTimeEvent(@Valid @RequestBody ArriveOnTimeEventLoggingRequest request) {
 
-        ArriveOnTimeEventLoggingServiceRequest serviceRequest = new ArriveOnTimeEventLoggingServiceRequest(request.getAppointmentId());
-        arriveOnTimeEventLogService.create(serviceRequest);
+        UpdateNotificationAtArriveOnTimeServiceRequest updateServiceRequest =
+                UpdateNotificationAtArriveOnTimeServiceRequest.builder()
+                        .appointmentId(request.getAppointmentId())
+                        .clientId(request.getClientId())
+                        .build();
+
+        updateNotificationAtArriveOnTimeService.update(updateServiceRequest);
+
+        ArriveOnTimeEventLoggingServiceRequest loggingServiceRequest =
+                new ArriveOnTimeEventLoggingServiceRequest(request.getAppointmentId());
+        arriveOnTimeEventLogService.create(loggingServiceRequest);
 
         return ResponseEntity.ok().build();
     }
