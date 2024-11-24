@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface FcmNotificationRepository extends JpaRepository<FcmNotification, Long> {
@@ -15,4 +16,6 @@ public interface FcmNotificationRepository extends JpaRepository<FcmNotification
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT n FROM FcmNotification n WHERE n.id = :id AND n.status = :status")
     Optional<FcmNotification> findByIdAndStatusForUpdate(@Param("id") Long id, @Param("status") NotificationStatus status);
+
+    List<FcmNotification> findAllByStatusIs(NotificationStatus status);
 }

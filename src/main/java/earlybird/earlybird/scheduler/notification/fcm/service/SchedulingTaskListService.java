@@ -33,8 +33,7 @@ public class SchedulingTaskListService {
 
     @PostConstruct
     private void init() {
-        fcmNotificationRepository.findAll().stream()
-                .filter(notification -> notification.getStatus().equals(PENDING))
+        fcmNotificationRepository.findAllByStatusIs(PENDING).stream()
                 .filter(notification -> notification.getTargetTime()
                         .isAfter(LocalDateTimeUtil.getLocalDateTimeNow()))
                 .map(AddTaskToSchedulingTaskListServiceRequest::of)
