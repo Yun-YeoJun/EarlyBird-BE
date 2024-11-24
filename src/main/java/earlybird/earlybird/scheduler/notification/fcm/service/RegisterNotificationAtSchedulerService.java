@@ -52,6 +52,27 @@ public class RegisterNotificationAtSchedulerService {
         return RegisterFcmMessageAtSchedulerServiceResponse.of(request.getAppointment());
     }
 
+    @Transactional
+    @Scheduled(cron = "0 0 23 * * ?", zone = "Asia/Seoul") // 매일 23시
+    protected void registerFcmMessageForRepeatingAppointment() {
+        DayOfWeek afterTwoDayFromNow = LocalDateTimeUtil.getLocalDateTimeNow().plusDays(2).getDayOfWeek();
+        List<RepeatingDay> repeatingDays = repeatingDayRepository.findAllByDayOfWeek(afterTwoDayFromNow);
+        repeatingDays.forEach(repeatingDay -> {
+            Appointment appointment = repeatingDay.getAppointment();
+
+            RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest registerRequest
+                    = RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest.from(appointment);
+
+            boolean notificationIsNotRegistered = appointment.getFcmNotifications().stream()
+                    .filter(notification -> notification.getNotificationStep().equals(APPOINTMENT_TIME))
+                    .filter(notification -> !notification.getTargetTime().isBefore(registerRequest.getAppointmentTime()))
+                    .noneMatch(notification -> notification.getStatus().equals(PENDING));
+
+            if (notificationIsNotRegistered)
+                registerFcmMessageForExistingAppointment(registerRequest);
+        });
+    }
+
     private Appointment createAppointmentBy(RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request) {
         Appointment appointment = Appointment.builder()
                 .appointmentName(request.getAppointmentName())
