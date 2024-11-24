@@ -18,7 +18,8 @@ public enum ErrorCode {
     INVALID_REQUEST_ARGUMENT(HttpStatus.BAD_REQUEST, "request argument 가 제약 조건을 만족하지 않습니다."),
     FCM_DEVICE_TOKEN_MISMATCH(HttpStatus.BAD_REQUEST, "요청한 알림 ID에 해당하는 디바이스 토큰과 요청한 디바이스 토큰이 일치하지 않습니다."),
     APPOINTMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 약속입니다."),
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다.");
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
+    DELETED_APPOINTMENT_EXCEPTION(HttpStatus.NOT_FOUND, "삭제된 일정입니다.");
 
     private final HttpStatus status;
     private final String message;
