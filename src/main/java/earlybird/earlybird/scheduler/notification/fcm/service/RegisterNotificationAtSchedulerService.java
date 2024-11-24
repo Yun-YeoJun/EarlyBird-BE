@@ -40,15 +40,7 @@ public class RegisterNotificationAtSchedulerService {
 
     @Transactional
     public RegisterFcmMessageAtSchedulerServiceResponse registerFcmMessageForExistingAppointment(RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest request) {
-        registerAll(
-                request.getPreparationTimeInstant(),
-                request.getMovingTimeInstant(),
-                request.getAppointmentTimeInstant(),
-                request.getAppointment(),
-                request.getClientId(),
-                request.getDeviceToken()
-        );
-
+        registerAll(request);
         return RegisterFcmMessageAtSchedulerServiceResponse.of(request.getAppointment());
     }
 
@@ -84,6 +76,15 @@ public class RegisterNotificationAtSchedulerService {
     }
 
     private void registerAll(Instant preparationTimeInstant, Instant movingTimeInstant, Instant appointmentTimeInstant, Appointment appointment, String clientId, String deviceToken) {
+    private void registerAll(RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest request) {
+
+        Instant preparationTimeInstant = request.getPreparationTimeInstant();
+        Instant movingTimeInstant = request.getMovingTimeInstant();
+        Instant appointmentTimeInstant = request.getAppointmentTimeInstant();
+        Appointment appointment = request.getAppointment();
+        String clientId = request.getClientId();
+        String deviceToken = request.getDeviceToken();
+
         // 준비 시작 1시간 전
         register(
                 preparationTimeInstant.minus(1, ChronoUnit.HOURS),
