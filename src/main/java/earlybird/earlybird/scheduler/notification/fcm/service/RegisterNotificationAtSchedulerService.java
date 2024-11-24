@@ -2,6 +2,9 @@ package earlybird.earlybird.scheduler.notification.fcm.service;
 
 import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.appointment.domain.AppointmentRepository;
+import earlybird.earlybird.appointment.domain.RepeatingDay;
+import earlybird.earlybird.appointment.domain.RepeatingDayRepository;
+import earlybird.earlybird.common.LocalDateTimeUtil;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
 import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
 import earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStep;
@@ -11,13 +14,16 @@ import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFc
 import earlybird.earlybird.scheduler.notification.fcm.service.response.RegisterFcmMessageAtSchedulerServiceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
+import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus.PENDING;
 import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStep.*;
 
 @Slf4j
@@ -28,6 +34,7 @@ public class RegisterNotificationAtSchedulerService {
     private final AppointmentRepository appointmentRepository;
     private final FcmNotificationRepository fcmNotificationRepository;
     private final SchedulingTaskListService schedulingTaskListService;
+    private final RepeatingDayRepository repeatingDayRepository;
 
     @Transactional
     public RegisterFcmMessageAtSchedulerServiceResponse registerFcmMessageForNewAppointment(RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request) {
@@ -66,16 +73,23 @@ public class RegisterNotificationAtSchedulerService {
     }
 
     private Appointment createAppointmentBy(RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request) {
-        Appointment appointment = Appointment.builder()
-                .appointmentName(request.getAppointmentName())
-                .clientId(request.getClientId())
-                .deviceToken(request.getDeviceToken())
-                .build();
+        Appointment appointment = buildAppointmentFrom(request);
         appointmentRepository.save(appointment);
         return appointment;
     }
 
-    private void registerAll(Instant preparationTimeInstant, Instant movingTimeInstant, Instant appointmentTimeInstant, Appointment appointment, String clientId, String deviceToken) {
+    private Appointment buildAppointmentFrom(RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request) {
+        return Appointment.builder()
+                .appointmentName(request.getAppointmentName())
+                .clientId(request.getClientId())
+                .deviceToken(request.getDeviceToken())
+                .appointmentTime(request.getAppointmentTime().toLocalTime())
+                .movingDuration(Duration.between(request.getMovingTime(), request.getAppointmentTime()))
+                .preparationDuration(Duration.between(request.getPreparationTime(), request.getMovingTime()))
+                .repeatingDayOfWeeks(new ArrayList<>())
+                .build();
+    }
+
     private void registerAll(RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest request) {
 
         Instant preparationTimeInstant = request.getPreparationTimeInstant();
