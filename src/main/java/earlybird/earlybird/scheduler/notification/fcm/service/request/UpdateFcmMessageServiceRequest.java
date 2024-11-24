@@ -21,7 +21,6 @@ public class UpdateFcmMessageServiceRequest {
     private LocalDateTime appointmentTime;
     private NotificationUpdateType updateType;
 
-
     public Instant getAppointmentTimeInstant() {
         return appointmentTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
     }

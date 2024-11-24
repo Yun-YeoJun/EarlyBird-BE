@@ -6,10 +6,8 @@ import earlybird.earlybird.scheduler.notification.fcm.service.request.UpdateFcmM
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 public class UpdateNotificationRequest {
