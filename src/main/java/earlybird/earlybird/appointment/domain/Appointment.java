@@ -2,7 +2,7 @@ package earlybird.earlybird.appointment.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import earlybird.earlybird.common.BaseTimeEntity;
-import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
+import earlybird.earlybird.scheduler.notification.domain.FcmNotification;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

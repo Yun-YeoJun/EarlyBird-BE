@@ -4,29 +4,40 @@ import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.appointment.domain.AppointmentRepository;
 import earlybird.earlybird.appointment.service.request.CreateAppointmentServiceRequest;
 import earlybird.earlybird.appointment.service.response.CreateAppointmentServiceResponse;
-import earlybird.earlybird.scheduler.notification.fcm.service.RegisterNotificationAtSchedulerService;
-import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest;
+import earlybird.earlybird.common.LocalDateTimeUtil;
+import earlybird.earlybird.scheduler.notification.domain.NotificationStep;
+import earlybird.earlybird.scheduler.notification.service.NotificationInfoFactory;
+import earlybird.earlybird.scheduler.notification.service.register.RegisterAllNotificationAtSchedulerService;
+import earlybird.earlybird.scheduler.notification.service.register.RegisterNotificationAtSchedulerService;
+import earlybird.earlybird.scheduler.notification.service.register.request.RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
 public class CreateAppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    private final RegisterNotificationAtSchedulerService registerNotificationAtSchedulerService;
+    private final RegisterAllNotificationAtSchedulerService registerService;
+    private final NotificationInfoFactory factory;
 
     @Transactional
     public CreateAppointmentServiceResponse create(CreateAppointmentServiceRequest request) {
-
         Appointment appointment = createAppointmentInstance(request);
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
-        RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest registerFcmServiceRequest
-                = RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest.from(request, savedAppointment);
+        LocalDateTime firstAppointmentTime = request.getFirstAppointmentTime();
+        LocalDateTime movingTime = LocalDateTimeUtil.subtractDuration(firstAppointmentTime, request.getMovingDuration());
+        LocalDateTime preparationTime = LocalDateTimeUtil.subtractDuration(movingTime, request.getPreparationDuration());
 
-        registerNotificationAtSchedulerService.registerFcmMessageForExistingAppointment(registerFcmServiceRequest);
+        Map<NotificationStep, Instant> notificationInfo =
+                factory.createTargetTimeMap(preparationTime, movingTime, firstAppointmentTime);
+        registerService.register(appointment, notificationInfo);
 
         return CreateAppointmentServiceResponse.builder()
                 .createdAppointmentId(savedAppointment.getId())

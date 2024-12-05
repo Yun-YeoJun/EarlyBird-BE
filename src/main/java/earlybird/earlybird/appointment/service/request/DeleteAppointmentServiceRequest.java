@@ -1,10 +1,10 @@
 package earlybird.earlybird.appointment.service.request;
 
-import earlybird.earlybird.scheduler.notification.fcm.service.request.DeregisterFcmMessageAtSchedulerServiceRequest;
+import earlybird.earlybird.scheduler.notification.service.deregister.request.DeregisterFcmMessageAtSchedulerServiceRequest;
 import lombok.Builder;
 import lombok.Getter;
 
-import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus.*;
+import static earlybird.earlybird.scheduler.notification.domain.NotificationStatus.*;
 
 @Getter
 public class DeleteAppointmentServiceRequest {

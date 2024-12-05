@@ -4,7 +4,7 @@ import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.appointment.domain.AppointmentRepository;
 import earlybird.earlybird.error.exception.AppointmentNotFoundException;
 import earlybird.earlybird.error.exception.DeletedAppointmentException;
-import earlybird.earlybird.scheduler.notification.fcm.service.request.DeregisterFcmMessageAtSchedulerServiceRequest;
+import earlybird.earlybird.scheduler.notification.service.deregister.request.DeregisterFcmMessageAtSchedulerServiceRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -48,6 +48,11 @@ dependencies {
 	implementation 'com.google.firebase:firebase-admin:9.3.0'
 
 	testImplementation 'org.awaitility:awaitility:4.2.2'
+
+	implementation(platform("software.amazon.awssdk:bom:2.27.21"))
+	implementation("software.amazon.awssdk:sdk-core")
+	implementation("software.amazon.awssdk:eventbridge")
+	implementation("software.amazon.awssdk:dynamodb")
 }
 
 tasks.named('test') {

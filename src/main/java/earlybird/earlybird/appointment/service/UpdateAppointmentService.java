@@ -1,17 +1,23 @@
 package earlybird.earlybird.appointment.service;
 
 import earlybird.earlybird.appointment.domain.Appointment;
-import earlybird.earlybird.appointment.domain.AppointmentRepository;
 import earlybird.earlybird.appointment.domain.AppointmentUpdateType;
 import earlybird.earlybird.appointment.service.request.UpdateAppointmentServiceRequest;
-import earlybird.earlybird.error.exception.AppointmentNotFoundException;
-import earlybird.earlybird.scheduler.notification.fcm.service.DeregisterNotificationAtSchedulerService;
-import earlybird.earlybird.scheduler.notification.fcm.service.RegisterNotificationAtSchedulerService;
-import earlybird.earlybird.scheduler.notification.fcm.service.request.DeregisterFcmMessageAtSchedulerServiceRequest;
-import earlybird.earlybird.scheduler.notification.fcm.service.request.RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest;
+import earlybird.earlybird.common.LocalDateTimeUtil;
+import earlybird.earlybird.scheduler.notification.domain.NotificationStep;
+import earlybird.earlybird.scheduler.notification.service.NotificationInfoFactory;
+import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterNotificationAtSchedulerService;
+import earlybird.earlybird.scheduler.notification.service.register.RegisterAllNotificationAtSchedulerService;
+import earlybird.earlybird.scheduler.notification.service.register.RegisterNotificationAtSchedulerService;
+import earlybird.earlybird.scheduler.notification.service.deregister.request.DeregisterNotificationServiceRequestFactory;
+import earlybird.earlybird.scheduler.notification.service.register.request.RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 import static earlybird.earlybird.appointment.domain.AppointmentUpdateType.MODIFY;
 
@@ -20,8 +26,10 @@ import static earlybird.earlybird.appointment.domain.AppointmentUpdateType.MODIF
 public class UpdateAppointmentService {
 
     private final DeregisterNotificationAtSchedulerService deregisterNotificationAtSchedulerService;
-    private final RegisterNotificationAtSchedulerService registerNotificationAtSchedulerService;
     private final FindAppointmentService findAppointmentService;
+    private final DeregisterNotificationServiceRequestFactory deregisterServiceRequestFactory;
+    private final RegisterAllNotificationAtSchedulerService registerService;
+    private final NotificationInfoFactory factory;
 
     @Transactional
     public void update(UpdateAppointmentServiceRequest request) {
@@ -34,12 +42,18 @@ public class UpdateAppointmentService {
         }
 
         deregisterNotificationAtSchedulerService.deregister(
-                DeregisterFcmMessageAtSchedulerServiceRequest.from(request)
+                deregisterServiceRequestFactory.create(request)
         );
 
-        registerNotificationAtSchedulerService.registerFcmMessageForExistingAppointment(
-                RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest.from(request, appointment)
-        );
+        // TODO: create service 코드와 겹치는 코드 개선 방향 찾아보기
+        LocalDateTime firstAppointmentTime = request.getFirstAppointmentTime();
+        LocalDateTime movingTime = LocalDateTimeUtil.subtractDuration(firstAppointmentTime, request.getMovingDuration());
+        LocalDateTime preparationTime = LocalDateTimeUtil.subtractDuration(movingTime, request.getPreparationDuration());
+
+        Map<NotificationStep, Instant> notificationInfo =
+                factory.createTargetTimeMap(preparationTime, movingTime, firstAppointmentTime);
+
+        registerService.register(appointment, notificationInfo);
     }
 
     private void modifyAppointment(Appointment appointment, UpdateAppointmentServiceRequest request) {

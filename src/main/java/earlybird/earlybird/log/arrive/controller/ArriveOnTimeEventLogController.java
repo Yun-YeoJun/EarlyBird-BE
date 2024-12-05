@@ -1,13 +1,10 @@
 package earlybird.earlybird.log.arrive.controller;
 
-import earlybird.earlybird.appointment.domain.AppointmentRepository;
 import earlybird.earlybird.log.arrive.controller.request.ArriveOnTimeEventLoggingRequest;
 import earlybird.earlybird.log.arrive.service.ArriveOnTimeEventLogService;
 import earlybird.earlybird.log.arrive.service.request.ArriveOnTimeEventLoggingServiceRequest;
-import earlybird.earlybird.scheduler.notification.fcm.service.UpdateNotificationAtArriveOnTimeService;
-import earlybird.earlybird.scheduler.notification.fcm.service.request.DeregisterFcmMessageAtSchedulerServiceRequest;
-import earlybird.earlybird.scheduler.notification.fcm.service.request.UpdateFcmMessageServiceRequest;
-import earlybird.earlybird.scheduler.notification.fcm.service.request.UpdateNotificationAtArriveOnTimeServiceRequest;
+import earlybird.earlybird.scheduler.notification.service.update.UpdateNotificationAtArriveOnTimeService;
+import earlybird.earlybird.scheduler.notification.service.update.request.UpdateNotificationAtArriveOnTimeServiceRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
