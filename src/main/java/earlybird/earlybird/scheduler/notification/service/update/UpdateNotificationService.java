@@ -1,12 +1,13 @@
 package earlybird.earlybird.scheduler.notification.service.update;
 
 import earlybird.earlybird.appointment.domain.Appointment;
-import earlybird.earlybird.appointment.domain.AppointmentRepository;
 import earlybird.earlybird.appointment.service.FindAppointmentService;
+import earlybird.earlybird.scheduler.notification.domain.NotificationStep;
 import earlybird.earlybird.scheduler.notification.domain.NotificationUpdateType;
-import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterNotificationAtSchedulerService;
+import earlybird.earlybird.scheduler.notification.service.NotificationInfoFactory;
+import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterNotificationService;
 import earlybird.earlybird.scheduler.notification.service.deregister.request.DeregisterNotificationServiceRequestFactory;
-import earlybird.earlybird.scheduler.notification.service.register.RegisterNotificationAtSchedulerService;
+import earlybird.earlybird.scheduler.notification.service.register.RegisterNotificationService;
 import earlybird.earlybird.scheduler.notification.service.register.request.RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.service.update.request.UpdateFcmMessageServiceRequest;
 import earlybird.earlybird.scheduler.notification.service.update.response.UpdateFcmMessageServiceResponse;
@@ -14,14 +15,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.Map;
+
 @RequiredArgsConstructor
 @Service
 public class UpdateNotificationService {
 
-    private final RegisterNotificationAtSchedulerService registerNotificationAtSchedulerService;
-    private final DeregisterNotificationAtSchedulerService deregisterNotificationAtSchedulerService;
-    private final DeregisterNotificationServiceRequestFactory deregisterServiceRequestFactory;
+    private final RegisterNotificationService registerNotificationService;
+    private final DeregisterNotificationService deregisterNotificationService;
     private final FindAppointmentService findAppointmentService;
+    private final NotificationInfoFactory notificationInfoFactory;
 
     @Transactional
     public UpdateFcmMessageServiceResponse update(UpdateFcmMessageServiceRequest request) {
@@ -31,13 +35,15 @@ public class UpdateNotificationService {
         Appointment appointment = findAppointmentService.findBy(appointmentId, request.getClientId());
         NotificationUpdateType updateType = request.getUpdateType();
 
-        deregisterNotificationAtSchedulerService.deregister(
-                deregisterServiceRequestFactory.create(appointmentId, clientId, updateType)
+        deregisterNotificationService.deregister(
+                DeregisterNotificationServiceRequestFactory.create(appointmentId, clientId, updateType)
         );
 
-        registerNotificationAtSchedulerService.registerFcmMessageForExistingAppointment(
-                RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest.from(request, appointment)
+        Map<NotificationStep, Instant> notificationInfo = notificationInfoFactory.createTargetTimeMap(
+                request.getPreparationTime(), request.getMovingTime(), request.getAppointmentTime()
         );
+
+        registerNotificationService.register(appointment, notificationInfo);
 
         changeDeviceTokenIfChanged(appointment, request.getDeviceToken());
         changeAppointmentNameIfChanged(appointment, request.getAppointmentName());

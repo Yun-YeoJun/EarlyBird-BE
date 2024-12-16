@@ -1,6 +1,6 @@
 package earlybird.earlybird.scheduler.notification.controller;
 
-import earlybird.earlybird.scheduler.notification.service.status.UpdateNotificationStatusService;
+import earlybird.earlybird.scheduler.notification.service.update.UpdateNotificationStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

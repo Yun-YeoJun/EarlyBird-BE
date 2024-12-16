@@ -1,4 +1,4 @@
-package earlybird.earlybird.scheduler.notification.service.status;
+package earlybird.earlybird.scheduler.notification.service.update;
 
 import earlybird.earlybird.error.exception.NotificationNotFoundException;
 import earlybird.earlybird.scheduler.notification.domain.FcmNotification;

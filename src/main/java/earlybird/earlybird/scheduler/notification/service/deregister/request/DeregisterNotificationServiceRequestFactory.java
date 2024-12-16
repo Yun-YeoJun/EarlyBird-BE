@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service;
 import static earlybird.earlybird.scheduler.notification.domain.NotificationUpdateType.MODIFY;
 import static earlybird.earlybird.scheduler.notification.domain.NotificationUpdateType.POSTPONE;
 
-@Service
 public class DeregisterNotificationServiceRequestFactory {
-    public DeregisterFcmMessageAtSchedulerServiceRequest create(
+    public static DeregisterFcmMessageAtSchedulerServiceRequest create(
             Long appointmentId, String clientId, NotificationStatus notificationStatus
     ) {
         return DeregisterFcmMessageAtSchedulerServiceRequest.builder()
@@ -21,7 +20,7 @@ public class DeregisterNotificationServiceRequestFactory {
                 .build();
     }
 
-    public DeregisterFcmMessageAtSchedulerServiceRequest create(
+    public static DeregisterFcmMessageAtSchedulerServiceRequest create(
             Long appointmentId, String clientId, NotificationUpdateType updateType
     ) {
         NotificationStatus targetStatus;
@@ -35,7 +34,7 @@ public class DeregisterNotificationServiceRequestFactory {
         return create(appointmentId, clientId, targetStatus);
     }
 
-    public DeregisterFcmMessageAtSchedulerServiceRequest create(UpdateAppointmentServiceRequest request) {
+    public static DeregisterFcmMessageAtSchedulerServiceRequest create(UpdateAppointmentServiceRequest request) {
         AppointmentUpdateType updateType = request.getUpdateType();
         NotificationStatus targetStatus = switch (updateType) {
             case POSTPONE -> NotificationStatus.POSTPONE;

@@ -20,16 +20,4 @@ public class UpdateFcmMessageServiceRequest {
     private LocalDateTime movingTime;
     private LocalDateTime appointmentTime;
     private NotificationUpdateType updateType;
-
-    public Instant getAppointmentTimeInstant() {
-        return appointmentTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
-    }
-
-    public Instant getPreparationTimeInstant() {
-        return preparationTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
-    }
-
-    public Instant getMovingTimeInstant() {
-        return movingTime.atZone(ZoneId.of("Asia/Seoul")).toInstant();
-    }
 }

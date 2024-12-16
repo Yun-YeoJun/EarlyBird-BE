@@ -6,11 +6,9 @@ import earlybird.earlybird.appointment.service.request.UpdateAppointmentServiceR
 import earlybird.earlybird.common.LocalDateTimeUtil;
 import earlybird.earlybird.scheduler.notification.domain.NotificationStep;
 import earlybird.earlybird.scheduler.notification.service.NotificationInfoFactory;
-import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterNotificationAtSchedulerService;
+import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterNotificationService;
 import earlybird.earlybird.scheduler.notification.service.register.RegisterAllNotificationAtSchedulerService;
-import earlybird.earlybird.scheduler.notification.service.register.RegisterNotificationAtSchedulerService;
 import earlybird.earlybird.scheduler.notification.service.deregister.request.DeregisterNotificationServiceRequestFactory;
-import earlybird.earlybird.scheduler.notification.service.register.request.RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +23,8 @@ import static earlybird.earlybird.appointment.domain.AppointmentUpdateType.MODIF
 @Service
 public class UpdateAppointmentService {
 
-    private final DeregisterNotificationAtSchedulerService deregisterNotificationAtSchedulerService;
+    private final DeregisterNotificationService deregisterNotificationService;
     private final FindAppointmentService findAppointmentService;
-    private final DeregisterNotificationServiceRequestFactory deregisterServiceRequestFactory;
     private final RegisterAllNotificationAtSchedulerService registerService;
     private final NotificationInfoFactory factory;
 
@@ -41,8 +38,8 @@ public class UpdateAppointmentService {
             modifyAppointment(appointment, request);
         }
 
-        deregisterNotificationAtSchedulerService.deregister(
-                deregisterServiceRequestFactory.create(request)
+        deregisterNotificationService.deregister(
+                DeregisterNotificationServiceRequestFactory.create(request)
         );
 
         // TODO: create service 코드와 겹치는 코드 개선 방향 찾아보기

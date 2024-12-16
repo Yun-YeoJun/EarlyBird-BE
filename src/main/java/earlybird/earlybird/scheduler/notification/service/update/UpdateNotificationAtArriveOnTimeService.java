@@ -3,7 +3,7 @@ package earlybird.earlybird.scheduler.notification.service.update;
 import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.appointment.domain.AppointmentRepository;
 import earlybird.earlybird.error.exception.AppointmentNotFoundException;
-import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterNotificationAtSchedulerService;
+import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterNotificationService;
 import earlybird.earlybird.scheduler.notification.service.deregister.request.DeregisterFcmMessageAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.service.deregister.request.DeregisterNotificationServiceRequestFactory;
 import earlybird.earlybird.scheduler.notification.service.update.request.UpdateNotificationAtArriveOnTimeServiceRequest;
@@ -18,8 +18,7 @@ import static earlybird.earlybird.scheduler.notification.domain.NotificationStat
 public class UpdateNotificationAtArriveOnTimeService {
 
     private final AppointmentRepository appointmentRepository;
-    private final DeregisterNotificationAtSchedulerService deregisterNotificationService;
-    private final DeregisterNotificationServiceRequestFactory deregisterServiceRequestFactory;
+    private final DeregisterNotificationService deregisterNotificationService;
 
     @Transactional
     public void update(UpdateNotificationAtArriveOnTimeServiceRequest request) {
@@ -29,9 +28,10 @@ public class UpdateNotificationAtArriveOnTimeService {
         if (!isValidClientId(appointment, request.getClientId()))
             throw new AppointmentNotFoundException();
 
-        DeregisterFcmMessageAtSchedulerServiceRequest deregisterRequest = deregisterServiceRequestFactory.create(
-                appointment.getId(), appointment.getClientId(), CANCELLED_BY_ARRIVE_ON_TIME
-        );
+        DeregisterFcmMessageAtSchedulerServiceRequest deregisterRequest =
+                DeregisterNotificationServiceRequestFactory.create(
+                        appointment.getId(), appointment.getClientId(), CANCELLED_BY_ARRIVE_ON_TIME
+                );
 
         deregisterNotificationService.deregister(deregisterRequest);
     }

@@ -13,7 +13,7 @@ import static earlybird.earlybird.scheduler.notification.domain.NotificationStat
 
 @RequiredArgsConstructor
 @Service
-public class DeregisterNotificationAtSchedulerService {
+public class DeregisterNotificationService {
 
     private final NotificationSchedulerManager notificationSchedulerManager;
     private final FindAppointmentService findAppointmentService;

@@ -16,7 +16,6 @@ import java.time.ZoneId;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@Service
 public class RegisterOneNotificationAtSchedulerService implements RegisterNotificationService {
 
     private final FcmNotificationRepository notificationRepository;

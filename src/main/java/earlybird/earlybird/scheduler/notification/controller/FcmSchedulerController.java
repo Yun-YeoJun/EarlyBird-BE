@@ -6,7 +6,7 @@ import earlybird.earlybird.scheduler.notification.controller.request.RegisterNot
 import earlybird.earlybird.scheduler.notification.controller.request.UpdateNotificationRequest;
 import earlybird.earlybird.scheduler.notification.controller.response.RegisterNotificationByTokenResponse;
 import earlybird.earlybird.scheduler.notification.controller.response.UpdateNotificationResponse;
-import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterNotificationAtSchedulerService;
+import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterNotificationService;
 import earlybird.earlybird.scheduler.notification.service.register.RegisterNotificationAtSchedulerService;
 import earlybird.earlybird.scheduler.notification.service.register.response.RegisterNotificationServiceResponse;
 import earlybird.earlybird.scheduler.notification.service.update.UpdateNotificationService;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 public class FcmSchedulerController {
 
     private final RegisterNotificationAtSchedulerService registerService;
-    private final DeregisterNotificationAtSchedulerService deregisterService;
+    private final DeregisterNotificationService deregisterService;
     private final UpdateNotificationService updateService;
 
     @PostMapping

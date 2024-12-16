@@ -2,7 +2,7 @@ package earlybird.earlybird.appointment.service;
 
 import earlybird.earlybird.appointment.domain.Appointment;
 import earlybird.earlybird.appointment.service.request.DeleteAppointmentServiceRequest;
-import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterNotificationAtSchedulerService;
+import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,12 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeleteAppointmentService {
 
     private final FindAppointmentService findAppointmentService;
-    private final DeregisterNotificationAtSchedulerService deregisterNotificationAtSchedulerService;
+    private final DeregisterNotificationService deregisterNotificationService;
 
     @Transactional
     public void delete(DeleteAppointmentServiceRequest request) {
         Appointment appointment = findAppointmentService.findBy(request.getAppointmentId(), request.getClientId());
-        deregisterNotificationAtSchedulerService.deregister(request.toDeregisterFcmMessageAtSchedulerServiceRequest());
+        deregisterNotificationService.deregister(request.toDeregisterFcmMessageAtSchedulerServiceRequest());
         appointment.setRepeatingDaysEmpty();
         appointment.setDeleted();
     }
