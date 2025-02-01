@@ -11,6 +11,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Gradle Caching
+        uses: actions/cache@v4
+        with:
+          path: |
+            $GITHUB_WORKSPACE/.gradle/caches
+            $GITHUB_WORKSPACE/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
