@@ -45,8 +45,9 @@ jobs:
           report_paths: '**/build/test-results/test/TEST-*.xml'
           github_token: ${{ secrets.PAT_TOKEN }}
           comment: 'true'
-          summary: '✅ 테스트 결과 ✅'
           updateComment: 'false'
+          summary: '# Test Result'
+          detailed_summary: 'true'
 
 #      - name: Publish Test Report 2
 #        uses: test-summary/action@v2
