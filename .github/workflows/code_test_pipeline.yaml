@@ -43,4 +43,4 @@ jobs:
         if: always()
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
-          report-paths: '**/build/test-results/test/TEST-*.xml'
+          report_paths: '**/build/test-results/test/TEST-*.xml'
