@@ -22,7 +22,6 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/src/main/resources/key
           echo "${{ secrets.FIREBASE_ADMIN_SDK_PRIVATE_KEY }}" | base64 --decode > $GITHUB_WORKSPACE/src/main/resources/key/firebase_admin_sdk_private_key.json
-          
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -43,4 +42,5 @@ jobs:
         uses: mikepenz/action-junit-report@v5
         if: always()
         with:
+          commit: ${{ github.event.workflow_run.head_sha }}
           report-paths: '**/build/test-results/test/TEST-*.xml'
