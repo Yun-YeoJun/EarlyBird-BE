@@ -37,8 +37,8 @@ jobs:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v5
         if: always()
         with:
-          junit_files: 'build/test-results/test/TEST-*.xml'
+          report-paths: '**/build/test-results/test/TEST-*.xml'
