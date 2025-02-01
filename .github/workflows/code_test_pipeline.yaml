@@ -44,11 +44,5 @@ jobs:
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           report_paths: '**/build/test-results/test/TEST-*.xml'
-          github_token: ${{ secrets.GITHUB_PAT_TOKEN }}
-
-      - name: Publish Test Summary Report
-        uses: test-summary/action@v2
-        if: always()
-        with:
-          paths: "**/build/test-results/test/TEST-*.xml"
-          show: "all"
+          github_token: ${{ secrets.PAT_TOKEN }}
+          
