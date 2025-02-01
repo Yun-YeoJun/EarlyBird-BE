@@ -2,12 +2,11 @@ name: Code Test Pipeline
 on:
   pull_request:
     branches: ["dev", "main"]
-permissions:
-  checks: write
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
