@@ -23,9 +23,7 @@ jobs:
           ls -la $GITHUB_WORKSPACE/src/main/resources/key
           head -n 2 $GITHUB_WORKSPACE/src/main/resources/key/firebase_admin_sdk_private_key.json
     
-    
-
-    - name: Grant execute permission for gradlew
+      - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Test with Gradle
