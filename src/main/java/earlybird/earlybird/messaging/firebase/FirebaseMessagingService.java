@@ -32,6 +32,9 @@ public class FirebaseMessagingService implements MessagingService {
     @PostConstruct
     private void init() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
+            ClassPathResource resource = new ClassPathResource(serviceAccountFilePath);
+            log.info("Loading Firebase credentials from {}", resource.getPath());
+            log.info("File exists: {}", resource.exists());
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(serviceAccountFilePath).getInputStream()))
                     .setProjectId(projectId)
