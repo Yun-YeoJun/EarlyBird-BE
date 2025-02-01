@@ -35,10 +35,13 @@ public class FirebaseMessagingService implements MessagingService {
             ClassPathResource resource = new ClassPathResource(serviceAccountFilePath);
             log.info("Loading Firebase credentials from {}", resource.getPath());
             log.info("File exists: {}", resource.exists());
+
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(serviceAccountFilePath).getInputStream()))
                     .setProjectId(projectId)
                     .build();
+
+            log.info("options.projectId: {}", options.getProjectId());
 
             FirebaseApp.initializeApp(options);
         }
