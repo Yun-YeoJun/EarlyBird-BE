@@ -16,6 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,9 +36,11 @@ public class FirebaseMessagingService implements MessagingService {
             ClassPathResource resource = new ClassPathResource(serviceAccountFilePath);
             log.info("Loading Firebase credentials from {}", resource.getPath());
             log.info("File exists: {}", resource.exists());
+            InputStream inputStream = new ClassPathResource(serviceAccountFilePath).getInputStream();
+            log.info("new ClassPathResource(serviceAccountFilePath).getInputStream().read(): {}", inputStream.read());
 
             FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(serviceAccountFilePath).getInputStream()))
+                    .setCredentials(GoogleCredentials.fromStream(inputStream))
                     .setProjectId(projectId)
                     .build();
 
