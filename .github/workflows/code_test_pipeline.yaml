@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Gradle Caching
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         with:
           path: |
             $GITHUB_WORKSPACE/.gradle/caches
