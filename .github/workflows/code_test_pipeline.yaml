@@ -49,8 +49,24 @@ jobs:
           summary: 'Test Result'
           detailed_summary: 'true'
 
-#      - name: Publish Test Report 2
-#        uses: test-summary/action@v2
-#        if: always()
-#        with:
-#          paths: '**/build/test-results/test/TEST-*.xml'
+      - name: Publish Test Report 2
+        uses: test-summary/action@v2
+        if: always()
+        with:
+          paths: '**/build/test-results/test/TEST-*.xml'
+          output: test-summary-2-markdown
+
+      - name: Add comment on PR
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.PAT_TOKEN }}
+          script: |
+            const output = `${{ steps.Publish-Test-Report-2.outputs.test-summary-2-mark-down }}`;
+            const { owner, repo, number } = context.issue;
+            const comment = `### 🧪 Test Summary\n${output}`;
+            github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: number,
+              body: comment
+            });
