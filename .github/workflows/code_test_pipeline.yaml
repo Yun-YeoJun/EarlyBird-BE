@@ -56,3 +56,9 @@ jobs:
           github_token: ${{ secrets.PAT_TOKEN }}
           comment: 'true'
           updateComment: 'false'
+
+      - name: Publish Test Report 2
+        uses: test-summary/action@v2
+        with:
+          paths: "**/build/test-results/test/TEST-*.xml"
+        if: always()
