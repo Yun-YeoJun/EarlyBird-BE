@@ -5,7 +5,7 @@
 //import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
 //import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
 //import earlybird.earlybird.scheduler.notification.fcm.service.request.AddTaskToSchedulingTaskListServiceRequest;
-//import earlybird.earlybird.scheduler.notification.fcm.service.request.DeregisterFcmMessageAtSchedulerServiceRequest;
+//import earlybird.earlybird.scheduler.notification.fcm.service.deregister.request.DeregisterFcmMessageAtSchedulerServiceRequest;
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
