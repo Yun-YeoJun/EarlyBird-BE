@@ -2,6 +2,16 @@ name: Code Test Pipeline
 on:
   pull_request:
     branches: ["dev", "main"]
+      
+env:
+  DB_URL: ${{ secrets.DB_URL }}
+  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  SPRING_ACTIVE_PROFILE: ${{ vars.SPRING_ACTIVE_PROFILE }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  FCM_PROJECT_ID: ${{ secrets.FCM_PROJECT_ID }}
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   test:
@@ -40,15 +50,6 @@ jobs:
 
       - name: Test with Gradle
         run: ./gradlew --info test
-        env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          SPRING_ACTIVE_PROFILE: ${{ vars.SPRING_ACTIVE_PROFILE }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          FCM_PROJECT_ID: ${{ secrets.FCM_PROJECT_ID }}
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Publish Test Report 1
         uses: mikepenz/action-junit-report@v5
