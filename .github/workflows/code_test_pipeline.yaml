@@ -46,7 +46,7 @@ jobs:
           github_token: ${{ secrets.PAT_TOKEN }}
           comment: 'true'
           updateComment: 'false'
-          summary: '# Test Result'
+          summary: 'Test Result'
           detailed_summary: 'true'
 
 #      - name: Publish Test Report 2
