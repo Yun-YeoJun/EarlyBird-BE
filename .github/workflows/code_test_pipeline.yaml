@@ -45,4 +45,4 @@ jobs:
           commit: ${{ github.event.workflow_run.head_sha }}
           report_paths: '**/build/test-results/test/TEST-*.xml'
           github_token: ${{ secrets.PAT_TOKEN }}
-          
+          comment: 'true'
