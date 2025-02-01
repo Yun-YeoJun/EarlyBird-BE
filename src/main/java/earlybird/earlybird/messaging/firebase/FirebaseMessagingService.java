@@ -37,7 +37,7 @@ public class FirebaseMessagingService implements MessagingService {
             log.info("Loading Firebase credentials from {}", resource.getPath());
             log.info("File exists: {}", resource.exists());
             InputStream inputStream = new ClassPathResource(serviceAccountFilePath).getInputStream();
-            log.info("new ClassPathResource(serviceAccountFilePath).getInputStream().read(): {}", inputStream.read());
+            log.info("new ClassPathResource(serviceAccountFilePath).getInputStream().read(): {}", new String(inputStream.readAllBytes()));
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(inputStream))
