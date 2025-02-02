@@ -70,5 +70,5 @@ jobs:
       - name: Formatting Code with Google Java Style Guide
         uses: axel-op/googlejavaformat-action@v3
         with:
-          args: "--replace"
+          args: "--replace --aosp"
           github-token: ${{ secrets.GITHUB_TOKEN }}
