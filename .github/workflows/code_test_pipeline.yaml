@@ -65,4 +65,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       - name: Formatting Code with Google Java Style Guide
-        uses: axel-op/googlejavaformat-action@v3
+        uses: axel-op/googlejavaformat-action@v3        uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "--replace"
+          skip-commit: true
