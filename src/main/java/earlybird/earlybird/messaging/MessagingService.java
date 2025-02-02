@@ -6,9 +6,9 @@ import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 
 public interface MessagingService {
-    @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 1000))
-    void send(SendMessageByTokenServiceRequest request);
+  @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 1000))
+  void send(SendMessageByTokenServiceRequest request);
 
-    @Recover
-    void recover(SendMessageByTokenServiceRequest request);
+  @Recover
+  void recover(SendMessageByTokenServiceRequest request);
 }

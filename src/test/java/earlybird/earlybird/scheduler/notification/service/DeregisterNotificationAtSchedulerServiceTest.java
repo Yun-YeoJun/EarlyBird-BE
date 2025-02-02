@@ -1,29 +1,31 @@
-//package earlybird.earlybird.scheduler.notification.fcm.service;
+// package earlybird.earlybird.scheduler.notification.fcm.service;
 //
-//import earlybird.earlybird.error.exception.AlreadySentFcmNotificationException;
-//import earlybird.earlybird.error.exception.FcmDeviceTokenMismatchException;
-//import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
-//import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
-//import earlybird.earlybird.scheduler.notification.fcm.service.request.AddTaskToSchedulingTaskListServiceRequest;
-//import earlybird.earlybird.scheduler.notification.fcm.service.deregister.request.DeregisterFcmMessageAtSchedulerServiceRequest;
-//import org.junit.jupiter.api.AfterEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.test.context.ActiveProfiles;
+// import earlybird.earlybird.error.exception.AlreadySentFcmNotificationException;
+// import earlybird.earlybird.error.exception.FcmDeviceTokenMismatchException;
+// import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotification;
+// import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
+// import
+// earlybird.earlybird.scheduler.notification.fcm.service.request.AddTaskToSchedulingTaskListServiceRequest;
+// import
+// earlybird.earlybird.scheduler.notification.fcm.service.deregister.request.DeregisterFcmMessageAtSchedulerServiceRequest;
+// import org.junit.jupiter.api.AfterEach;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.test.context.ActiveProfiles;
 //
-//import java.time.LocalDateTime;
-//import java.time.ZoneId;
+// import java.time.LocalDateTime;
+// import java.time.ZoneId;
 //
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.assertj.core.api.Assertions.assertThatThrownBy;
-//import static org.junit.jupiter.api.Assertions.*;
+// import static org.assertj.core.api.Assertions.assertThat;
+// import static org.assertj.core.api.Assertions.assertThatThrownBy;
+// import static org.junit.jupiter.api.Assertions.*;
 //
-//@ActiveProfiles("test")
-//@SpringBootTest
-//class DeregisterNotificationAtSchedulerServiceTest {
+// @ActiveProfiles("test")
+// @SpringBootTest
+// class DeregisterNotificationAtSchedulerServiceTest {
 //
 //    @Autowired
 //    private DeregisterNotificationAtSchedulerService deregisterNotificationAtSchedulerService;
@@ -51,7 +53,8 @@
 //        DeregisterFcmMessageAtSchedulerServiceRequest request
 //                = createDeregisterRequest(savedNotification.getId(), "deviceToken");
 //
-//        AddTaskToSchedulingTaskListServiceRequest addRequest = AddTaskToSchedulingTaskListServiceRequest.builder()
+//        AddTaskToSchedulingTaskListServiceRequest addRequest =
+// AddTaskToSchedulingTaskListServiceRequest.builder()
 //                .targetTime(targetTime.atZone(ZoneId.of("Asia/Seoul")).toInstant())
 //                .uuid("uuid")
 //                .title("title")
@@ -84,7 +87,8 @@
 //                .isInstanceOf(FcmDeviceTokenMismatchException.class);
 //    }
 //
-//    private DeregisterFcmMessageAtSchedulerServiceRequest createDeregisterRequest(Long notificationId, String deviceToken) {
+//    private DeregisterFcmMessageAtSchedulerServiceRequest createDeregisterRequest(Long
+// notificationId, String deviceToken) {
 //        return DeregisterFcmMessageAtSchedulerServiceRequest.builder()
 //                .notificationId(notificationId)
 //                .deviceToken(deviceToken)
@@ -119,4 +123,4 @@
 //    }
 //
 //
-//}
+// }

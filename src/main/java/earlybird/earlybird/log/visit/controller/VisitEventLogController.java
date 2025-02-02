@@ -15,14 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class VisitEventLogController {
 
-    private final VisitEventLogService visitEventLogService;
-    
-    @PostMapping("/visit-event")
-    public ResponseEntity<?> visitEventLogging(@RequestBody VisitEventLoggingRequest request) {
-        if (request.getClientId() == null || request.getClientId().isEmpty())
-            return ResponseEntity.badRequest().body("clientId is empty");
-        VisitEventLoggingServiceRequest serviceRequest = new VisitEventLoggingServiceRequest(request.getClientId());
-        visitEventLogService.create(serviceRequest);
-        return ResponseEntity.ok().build();
-    }
+  private final VisitEventLogService visitEventLogService;
+
+  @PostMapping("/visit-event")
+  public ResponseEntity<?> visitEventLogging(@RequestBody VisitEventLoggingRequest request) {
+    if (request.getClientId() == null || request.getClientId().isEmpty())
+      return ResponseEntity.badRequest().body("clientId is empty");
+    VisitEventLoggingServiceRequest serviceRequest =
+        new VisitEventLoggingServiceRequest(request.getClientId());
+    visitEventLogService.create(serviceRequest);
+    return ResponseEntity.ok().build();
+  }
 }

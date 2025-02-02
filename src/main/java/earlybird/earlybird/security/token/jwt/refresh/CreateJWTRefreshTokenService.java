@@ -9,17 +9,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class CreateJWTRefreshTokenService {
 
-    private final JWTUtil jwtUtil;
-    private final SaveJWTRefreshTokenService saveJWTRefreshTokenService;
+  private final JWTUtil jwtUtil;
+  private final SaveJWTRefreshTokenService saveJWTRefreshTokenService;
 
-    public String createRefreshToken(UserAccountInfoDTO userDTO, final Long expiredMs) {
-        String accountId = userDTO.getAccountId();
-        String role = userDTO.getRole();
+  public String createRefreshToken(UserAccountInfoDTO userDTO, final Long expiredMs) {
+    String accountId = userDTO.getAccountId();
+    String role = userDTO.getRole();
 
-        String refresh = jwtUtil.createJwt("refresh", accountId, role, expiredMs);
+    String refresh = jwtUtil.createJwt("refresh", accountId, role, expiredMs);
 
-        saveJWTRefreshTokenService.saveJWTRefreshToken(accountId, refresh, expiredMs);
+    saveJWTRefreshTokenService.saveJWTRefreshToken(accountId, refresh, expiredMs);
 
-        return refresh;
-    }
+    return refresh;
+  }
 }

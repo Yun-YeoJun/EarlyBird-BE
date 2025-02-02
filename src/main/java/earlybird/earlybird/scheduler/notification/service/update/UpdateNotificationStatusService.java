@@ -11,13 +11,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UpdateNotificationStatusService {
 
-    private final FcmNotificationRepository notificationRepository;
+  private final FcmNotificationRepository notificationRepository;
 
-    @Transactional
-    public void update(Long notificationId, Boolean sendSuccess) {
-        FcmNotification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(NotificationNotFoundException::new);
-        if (sendSuccess) notification.onSendToFcmSuccess();
-        else notification.onSendToFcmFailure();
-    }
+  @Transactional
+  public void update(Long notificationId, Boolean sendSuccess) {
+    FcmNotification notification =
+        notificationRepository
+            .findById(notificationId)
+            .orElseThrow(NotificationNotFoundException::new);
+    if (sendSuccess) notification.onSendToFcmSuccess();
+    else notification.onSendToFcmFailure();
+  }
 }

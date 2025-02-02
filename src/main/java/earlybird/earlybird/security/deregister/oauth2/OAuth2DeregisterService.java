@@ -14,18 +14,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class OAuth2DeregisterService {
 
-    private final DeleteUserService deleteUserService;
-    private final FindOAuth2TokenService findOAuth2TokenService;
-    private final RevokeOAuth2TokenService revokeOAuth2TokenService;
-    private final DeleteOAuth2TokenService deleteOAuth2TokenService;
+  private final DeleteUserService deleteUserService;
+  private final FindOAuth2TokenService findOAuth2TokenService;
+  private final RevokeOAuth2TokenService revokeOAuth2TokenService;
+  private final DeleteOAuth2TokenService deleteOAuth2TokenService;
 
-    public void deregister(OAuth2UserDetails userDetails) {
-        UserAccountInfoDTO userInfo = userDetails.getUserAccountInfoDTO();
-        Long userId = userInfo.getId();
-        OAuth2TokenDTO oAuth2TokenDTO = findOAuth2TokenService.findByUserId(userId);
+  public void deregister(OAuth2UserDetails userDetails) {
+    UserAccountInfoDTO userInfo = userDetails.getUserAccountInfoDTO();
+    Long userId = userInfo.getId();
+    OAuth2TokenDTO oAuth2TokenDTO = findOAuth2TokenService.findByUserId(userId);
 
-        revokeOAuth2TokenService.revoke(oAuth2TokenDTO);
-        deleteOAuth2TokenService.deleteByUserAccountInfoDTO(userInfo);
-        deleteUserService.deleteUser(userInfo);
-    }
+    revokeOAuth2TokenService.revoke(oAuth2TokenDTO);
+    deleteOAuth2TokenService.deleteByUserAccountInfoDTO(userInfo);
+    deleteUserService.deleteUser(userInfo);
+  }
 }

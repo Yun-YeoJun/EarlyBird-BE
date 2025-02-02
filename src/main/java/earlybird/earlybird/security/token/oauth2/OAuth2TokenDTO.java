@@ -8,9 +8,9 @@ import lombok.Getter;
 @Getter
 @Builder
 public class OAuth2TokenDTO {
-    private Long id;
-    private String accessToken;
-    private String refreshToken;
-    private OAuth2ProviderName oAuth2ProviderName;
-    private UserAccountInfoDTO userDTO;
+  private Long id;
+  private String accessToken;
+  private String refreshToken;
+  private OAuth2ProviderName oAuth2ProviderName;
+  private UserAccountInfoDTO userDTO;
 }

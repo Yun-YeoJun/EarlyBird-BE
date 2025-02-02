@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class CreateJWTAccessTokenService {
 
-    private final JWTUtil jwtUtil;
+  private final JWTUtil jwtUtil;
 
-    public String createAccessToken(UserAccountInfoDTO userDTO, final Long expiredMs) {
-        String accountId = userDTO.getAccountId();
-        String role = userDTO.getRole();
+  public String createAccessToken(UserAccountInfoDTO userDTO, final Long expiredMs) {
+    String accountId = userDTO.getAccountId();
+    String role = userDTO.getRole();
 
-        return jwtUtil.createJwt("access", accountId, role, expiredMs);
-    }
+    return jwtUtil.createJwt("access", accountId, role, expiredMs);
+  }
 }

@@ -18,11 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Deprecated:
- * 클라이언트에서 이 API 를 사용하는 코드가
- * 전부 AppointmentController 의 API 로 변경되면
- * 이 컨트롤러 삭제
- * TODO: 람다에서 전송 성공하거나 실패했을 때 호출할 컨트롤러 만들기
+ * Deprecated: 클라이언트에서 이 API 를 사용하는 코드가 전부 AppointmentController 의 API 로 변경되면 이 컨트롤러 삭제 TODO: 람다에서
+ * 전송 성공하거나 실패했을 때 호출할 컨트롤러 만들기
  */
 @Deprecated
 @RequiredArgsConstructor
@@ -30,42 +27,47 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class FcmSchedulerController {
 
-    private final RegisterNotificationAtSchedulerService registerService;
-    private final DeregisterNotificationService deregisterService;
-    private final UpdateNotificationService updateService;
+  private final RegisterNotificationAtSchedulerService registerService;
+  private final DeregisterNotificationService deregisterService;
+  private final UpdateNotificationService updateService;
 
-    @PostMapping
-    public ResponseEntity<?> registerTokenNotification(@Valid @RequestBody RegisterNotificationByTokenRequest request) throws FirebaseMessagingException {
-        RegisterNotificationServiceResponse serviceResponse = registerService
-                .registerFcmMessageForNewAppointment(request.toRegisterFcmMessageForNewAppointmentAtSchedulerRequest());
+  @PostMapping
+  public ResponseEntity<?> registerTokenNotification(
+      @Valid @RequestBody RegisterNotificationByTokenRequest request)
+      throws FirebaseMessagingException {
+    RegisterNotificationServiceResponse serviceResponse =
+        registerService.registerFcmMessageForNewAppointment(
+            request.toRegisterFcmMessageForNewAppointmentAtSchedulerRequest());
 
-        RegisterNotificationByTokenResponse controllerResponse = RegisterNotificationByTokenResponse.from(serviceResponse);
+    RegisterNotificationByTokenResponse controllerResponse =
+        RegisterNotificationByTokenResponse.from(serviceResponse);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(controllerResponse);
-    }
+    return ResponseEntity.status(HttpStatus.OK).body(controllerResponse);
+  }
 
-    @PatchMapping
-    public ResponseEntity<?> updateNotification(@Valid @RequestBody UpdateNotificationRequest request) {
-        UpdateFcmMessageServiceResponse serviceResponse = updateService.update(request.toServiceRequest());
-        UpdateNotificationResponse controllerResponse = UpdateNotificationResponse.from(serviceResponse);
+  @PatchMapping
+  public ResponseEntity<?> updateNotification(
+      @Valid @RequestBody UpdateNotificationRequest request) {
+    UpdateFcmMessageServiceResponse serviceResponse =
+        updateService.update(request.toServiceRequest());
+    UpdateNotificationResponse controllerResponse =
+        UpdateNotificationResponse.from(serviceResponse);
 
-        return ResponseEntity
-                .ok()
-                .body(controllerResponse);
-    }
+    return ResponseEntity.ok().body(controllerResponse);
+  }
 
-    @DeleteMapping
-    public ResponseEntity<?> deregisterTokenNotificationAtScheduler(
-            @RequestHeader("appointmentId") Long appointmentId, @RequestHeader("clientId") String clientId) {
+  @DeleteMapping
+  public ResponseEntity<?> deregisterTokenNotificationAtScheduler(
+      @RequestHeader("appointmentId") Long appointmentId,
+      @RequestHeader("clientId") String clientId) {
 
-        DeregisterNotificationByTokenRequest request = DeregisterNotificationByTokenRequest.builder()
-                .appointmentId(appointmentId)
-                .clientId(clientId)
-                .build();
+    DeregisterNotificationByTokenRequest request =
+        DeregisterNotificationByTokenRequest.builder()
+            .appointmentId(appointmentId)
+            .clientId(clientId)
+            .build();
 
-        deregisterService.deregister(request.toServiceRequest());
-        return ResponseEntity.noContent().build();
-    }
+    deregisterService.deregister(request.toServiceRequest());
+    return ResponseEntity.noContent().build();
+  }
 }

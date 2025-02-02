@@ -1,4 +1,3 @@
 package earlybird.earlybird.appointment.controller.response;
 
-public class UpdateAppointmentResponse {
-}
+public class UpdateAppointmentResponse {}

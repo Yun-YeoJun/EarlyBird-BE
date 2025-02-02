@@ -5,16 +5,17 @@ import lombok.*;
 
 @Getter
 public class CreateAppointmentResponse {
-    private final Long createdAppointmentId;
+  private final Long createdAppointmentId;
 
-    @Builder
-    private CreateAppointmentResponse(Long createdAppointmentId) {
-        this.createdAppointmentId = createdAppointmentId;
-    }
+  @Builder
+  private CreateAppointmentResponse(Long createdAppointmentId) {
+    this.createdAppointmentId = createdAppointmentId;
+  }
 
-    public static CreateAppointmentResponse from(CreateAppointmentServiceResponse createAppointmentServiceResponse) {
-        return CreateAppointmentResponse.builder()
-                .createdAppointmentId(createAppointmentServiceResponse.getCreatedAppointmentId())
-                .build();
-    }
+  public static CreateAppointmentResponse from(
+      CreateAppointmentServiceResponse createAppointmentServiceResponse) {
+    return CreateAppointmentResponse.builder()
+        .createdAppointmentId(createAppointmentServiceResponse.getCreatedAppointmentId())
+        .build();
+  }
 }

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class OAuth2UserJoinService {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public void join(OAuth2ServerResponse userInfo) {
-        User user = new User(userInfo);
-        userRepository.save(user);
-    }
+  public void join(OAuth2ServerResponse userInfo) {
+    User user = new User(userInfo);
+    userRepository.save(user);
+  }
 }

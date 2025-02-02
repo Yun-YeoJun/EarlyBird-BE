@@ -1,38 +1,38 @@
-//package earlybird.earlybird.scheduler.notification.fcm.domain;
+// package earlybird.earlybird.scheduler.notification.fcm.domain;
 //
-//import earlybird.earlybird.appointment.domain.Appointment;
-//import earlybird.earlybird.appointment.domain.AppointmentRepository;
-//import jakarta.persistence.EntityManager;
-//import jakarta.persistence.EntityManagerFactory;
-//import jakarta.persistence.PersistenceUnit;
-//import org.junit.jupiter.api.AfterEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Qualifier;
-//import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-//import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.context.annotation.Import;
-//import org.springframework.core.task.TaskExecutor;
-//import org.springframework.dao.PessimisticLockingFailureException;
-//import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-//import org.springframework.security.core.parameters.P;
-//import org.springframework.stereotype.Component;
-//import org.springframework.test.context.ActiveProfiles;
-//import org.springframework.test.context.web.WebAppConfiguration;
-//import org.springframework.transaction.annotation.Transactional;
+// import earlybird.earlybird.appointment.domain.Appointment;
+// import earlybird.earlybird.appointment.domain.AppointmentRepository;
+// import jakarta.persistence.EntityManager;
+// import jakarta.persistence.EntityManagerFactory;
+// import jakarta.persistence.PersistenceUnit;
+// import org.junit.jupiter.api.AfterEach;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.beans.factory.annotation.Qualifier;
+// import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+// import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.context.annotation.Import;
+// import org.springframework.core.task.TaskExecutor;
+// import org.springframework.dao.PessimisticLockingFailureException;
+// import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+// import org.springframework.security.core.parameters.P;
+// import org.springframework.stereotype.Component;
+// import org.springframework.test.context.ActiveProfiles;
+// import org.springframework.test.context.web.WebAppConfiguration;
+// import org.springframework.transaction.annotation.Transactional;
 //
-//import java.time.LocalDateTime;
-//import java.util.Optional;
-//import java.util.concurrent.CompletableFuture;
+// import java.time.LocalDateTime;
+// import java.util.Optional;
+// import java.util.concurrent.CompletableFuture;
 //
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.assertj.core.api.Assertions.assertThatThrownBy;
-//import static org.junit.jupiter.api.Assertions.*;
+// import static org.assertj.core.api.Assertions.assertThat;
+// import static org.assertj.core.api.Assertions.assertThatThrownBy;
+// import static org.junit.jupiter.api.Assertions.*;
 //
-//@Component
-//class Transaction {
+// @Component
+// class Transaction {
 //
 //    @Transactional
 //    public void run(Runnable runnable) {
@@ -42,13 +42,13 @@
 //            throw new RuntimeException(e);
 //        }
 //    }
-//}
+// }
 //
-//@Import(Transaction.class)
-//@ActiveProfiles("test")
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-//@SpringBootTest
-//class FcmNotificationRepositoryTest {
+// @Import(Transaction.class)
+// @ActiveProfiles("test")
+// @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+// @SpringBootTest
+// class FcmNotificationRepositoryTest {
 //
 //    @Autowired
 //    private FcmNotificationRepository fcmNotificationRepository;
@@ -78,7 +78,9 @@
 //
 //        transaction.run(() -> {
 //            // when
-//            FcmNotification result = fcmNotificationRepository.findByIdAndStatusForUpdate(savedNotification.getId(), savedNotification.getStatus()).get();
+//            FcmNotification result =
+// fcmNotificationRepository.findByIdAndStatusForUpdate(savedNotification.getId(),
+// savedNotification.getStatus()).get();
 //
 //            // then
 //            assertThat(result.getId()).isEqualTo(savedNotification.getId());
@@ -97,8 +99,11 @@
 //        FcmNotification savedNotification = fcmNotificationRepository.save(notification);
 //
 //        // when
-//        CompletableFuture<Void> transaction1 = CompletableFuture.runAsync(() -> transaction.run(() -> {
-//            FcmNotification fcmNotification = fcmNotificationRepository.findByIdAndStatusForUpdate(savedNotification.getId(), savedNotification.getStatus()).get();
+//        CompletableFuture<Void> transaction1 = CompletableFuture.runAsync(() -> transaction.run(()
+// -> {
+//            FcmNotification fcmNotification =
+// fcmNotificationRepository.findByIdAndStatusForUpdate(savedNotification.getId(),
+// savedNotification.getStatus()).get();
 //            threadSleep(5000);
 //            fcmNotification.updateStatusTo(NotificationStatus.CANCELLED);
 //        }));
@@ -107,7 +112,8 @@
 //
 //        CompletableFuture<Void> transaction2 = CompletableFuture.runAsync(() -> {
 //            transaction.run(() -> {
-//                FcmNotification fcmNotification = fcmNotificationRepository.findById(savedNotification.getId()).get();
+//                FcmNotification fcmNotification =
+// fcmNotificationRepository.findById(savedNotification.getId()).get();
 //                fcmNotification.updateStatusTo(NotificationStatus.COMPLETED);
 //            });
 //        });
@@ -116,7 +122,8 @@
 //        transaction2.join();
 //
 //        // then
-//        FcmNotification fcmNotification = fcmNotificationRepository.findById(savedNotification.getId()).get();
+//        FcmNotification fcmNotification =
+// fcmNotificationRepository.findById(savedNotification.getId()).get();
 //        assertThat(fcmNotification.getStatus()).isEqualTo(NotificationStatus.COMPLETED);
 //    }
 //
@@ -144,7 +151,7 @@
 //                .notificationStep(NotificationStep.APPOINTMENT_TIME)
 //                .build();
 //    }
-//}
+// }
 //
 //
 //
