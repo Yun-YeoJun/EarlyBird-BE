@@ -64,6 +64,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
       - name: Formatting Code with Google Java Style Guide
         uses: axel-op/googlejavaformat-action@v3
         with:
