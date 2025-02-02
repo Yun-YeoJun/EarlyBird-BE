@@ -18,9 +18,24 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Formatting Code with Google Java Style Guide
+        uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "--replace --aosp"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
   unit-test:
     runs-on: ubuntu-latest
     permissions: write-all
+    needs: [formatting]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -58,17 +73,3 @@ jobs:
         if: always()
         with:
           files: "**/build/test-results/test/TEST-*.xml"
-
-  formatting:
-    runs-on: ubuntu-latest
-    permissions: write-all
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-      - name: Formatting Code with Google Java Style Guide
-        uses: axel-op/googlejavaformat-action@v3
-        with:
-          args: "--replace --aosp"
-          github-token: ${{ secrets.GITHUB_TOKEN }}
