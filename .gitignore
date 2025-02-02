@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+###
+src/main/java/earlybird/earlybird/user/TestController.java
+src/main/resources/key/firebase_admin_sdk_private_key.json
+
+logs/*.log
