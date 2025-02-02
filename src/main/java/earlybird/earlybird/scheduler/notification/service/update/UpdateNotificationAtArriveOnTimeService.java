@@ -9,7 +9,9 @@ import earlybird.earlybird.scheduler.notification.service.deregister.DeregisterN
 import earlybird.earlybird.scheduler.notification.service.deregister.request.DeregisterFcmMessageAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.service.deregister.request.DeregisterNotificationServiceRequestFactory;
 import earlybird.earlybird.scheduler.notification.service.update.request.UpdateNotificationAtArriveOnTimeServiceRequest;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,27 +19,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UpdateNotificationAtArriveOnTimeService {
 
-  private final AppointmentRepository appointmentRepository;
-  private final DeregisterNotificationService deregisterNotificationService;
+    private final AppointmentRepository appointmentRepository;
+    private final DeregisterNotificationService deregisterNotificationService;
 
-  @Transactional
-  public void update(UpdateNotificationAtArriveOnTimeServiceRequest request) {
-    Appointment appointment =
-        appointmentRepository
-            .findById(request.getAppointmentId())
-            .orElseThrow(AppointmentNotFoundException::new);
+    @Transactional
+    public void update(UpdateNotificationAtArriveOnTimeServiceRequest request) {
+        Appointment appointment =
+                appointmentRepository
+                        .findById(request.getAppointmentId())
+                        .orElseThrow(AppointmentNotFoundException::new);
 
-    if (!isValidClientId(appointment, request.getClientId()))
-      throw new AppointmentNotFoundException();
+        if (!isValidClientId(appointment, request.getClientId()))
+            throw new AppointmentNotFoundException();
 
-    DeregisterFcmMessageAtSchedulerServiceRequest deregisterRequest =
-        DeregisterNotificationServiceRequestFactory.create(
-            appointment.getId(), appointment.getClientId(), CANCELLED_BY_ARRIVE_ON_TIME);
+        DeregisterFcmMessageAtSchedulerServiceRequest deregisterRequest =
+                DeregisterNotificationServiceRequestFactory.create(
+                        appointment.getId(),
+                        appointment.getClientId(),
+                        CANCELLED_BY_ARRIVE_ON_TIME);
 
-    deregisterNotificationService.deregister(deregisterRequest);
-  }
+        deregisterNotificationService.deregister(deregisterRequest);
+    }
 
-  private boolean isValidClientId(Appointment appointment, String requestedClientId) {
-    return appointment.getClientId().equals(requestedClientId);
-  }
+    private boolean isValidClientId(Appointment appointment, String requestedClientId) {
+        return appointment.getClientId().equals(requestedClientId);
+    }
 }

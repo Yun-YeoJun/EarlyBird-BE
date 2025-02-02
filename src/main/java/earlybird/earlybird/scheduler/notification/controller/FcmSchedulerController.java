@@ -1,6 +1,7 @@
 package earlybird.earlybird.scheduler.notification.controller;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+
 import earlybird.earlybird.scheduler.notification.controller.request.DeregisterNotificationByTokenRequest;
 import earlybird.earlybird.scheduler.notification.controller.request.RegisterNotificationByTokenRequest;
 import earlybird.earlybird.scheduler.notification.controller.request.UpdateNotificationRequest;
@@ -11,8 +12,11 @@ import earlybird.earlybird.scheduler.notification.service.register.RegisterNotif
 import earlybird.earlybird.scheduler.notification.service.register.response.RegisterNotificationServiceResponse;
 import earlybird.earlybird.scheduler.notification.service.update.UpdateNotificationService;
 import earlybird.earlybird.scheduler.notification.service.update.response.UpdateFcmMessageServiceResponse;
+
 import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,47 +31,47 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class FcmSchedulerController {
 
-  private final RegisterNotificationAtSchedulerService registerService;
-  private final DeregisterNotificationService deregisterService;
-  private final UpdateNotificationService updateService;
+    private final RegisterNotificationAtSchedulerService registerService;
+    private final DeregisterNotificationService deregisterService;
+    private final UpdateNotificationService updateService;
 
-  @PostMapping
-  public ResponseEntity<?> registerTokenNotification(
-      @Valid @RequestBody RegisterNotificationByTokenRequest request)
-      throws FirebaseMessagingException {
-    RegisterNotificationServiceResponse serviceResponse =
-        registerService.registerFcmMessageForNewAppointment(
-            request.toRegisterFcmMessageForNewAppointmentAtSchedulerRequest());
+    @PostMapping
+    public ResponseEntity<?> registerTokenNotification(
+            @Valid @RequestBody RegisterNotificationByTokenRequest request)
+            throws FirebaseMessagingException {
+        RegisterNotificationServiceResponse serviceResponse =
+                registerService.registerFcmMessageForNewAppointment(
+                        request.toRegisterFcmMessageForNewAppointmentAtSchedulerRequest());
 
-    RegisterNotificationByTokenResponse controllerResponse =
-        RegisterNotificationByTokenResponse.from(serviceResponse);
+        RegisterNotificationByTokenResponse controllerResponse =
+                RegisterNotificationByTokenResponse.from(serviceResponse);
 
-    return ResponseEntity.status(HttpStatus.OK).body(controllerResponse);
-  }
+        return ResponseEntity.status(HttpStatus.OK).body(controllerResponse);
+    }
 
-  @PatchMapping
-  public ResponseEntity<?> updateNotification(
-      @Valid @RequestBody UpdateNotificationRequest request) {
-    UpdateFcmMessageServiceResponse serviceResponse =
-        updateService.update(request.toServiceRequest());
-    UpdateNotificationResponse controllerResponse =
-        UpdateNotificationResponse.from(serviceResponse);
+    @PatchMapping
+    public ResponseEntity<?> updateNotification(
+            @Valid @RequestBody UpdateNotificationRequest request) {
+        UpdateFcmMessageServiceResponse serviceResponse =
+                updateService.update(request.toServiceRequest());
+        UpdateNotificationResponse controllerResponse =
+                UpdateNotificationResponse.from(serviceResponse);
 
-    return ResponseEntity.ok().body(controllerResponse);
-  }
+        return ResponseEntity.ok().body(controllerResponse);
+    }
 
-  @DeleteMapping
-  public ResponseEntity<?> deregisterTokenNotificationAtScheduler(
-      @RequestHeader("appointmentId") Long appointmentId,
-      @RequestHeader("clientId") String clientId) {
+    @DeleteMapping
+    public ResponseEntity<?> deregisterTokenNotificationAtScheduler(
+            @RequestHeader("appointmentId") Long appointmentId,
+            @RequestHeader("clientId") String clientId) {
 
-    DeregisterNotificationByTokenRequest request =
-        DeregisterNotificationByTokenRequest.builder()
-            .appointmentId(appointmentId)
-            .clientId(clientId)
-            .build();
+        DeregisterNotificationByTokenRequest request =
+                DeregisterNotificationByTokenRequest.builder()
+                        .appointmentId(appointmentId)
+                        .clientId(clientId)
+                        .build();
 
-    deregisterService.deregister(request.toServiceRequest());
-    return ResponseEntity.noContent().build();
-  }
+        deregisterService.deregister(request.toServiceRequest());
+        return ResponseEntity.noContent().build();
+    }
 }

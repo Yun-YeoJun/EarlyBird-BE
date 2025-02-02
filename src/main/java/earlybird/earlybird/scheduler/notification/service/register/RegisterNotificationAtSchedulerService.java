@@ -7,14 +7,17 @@ import earlybird.earlybird.scheduler.notification.service.NotificationInfoFactor
 import earlybird.earlybird.scheduler.notification.service.register.request.RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.service.register.request.RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest;
 import earlybird.earlybird.scheduler.notification.service.register.response.RegisterNotificationServiceResponse;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Deprecated
 @Slf4j
@@ -22,54 +25,58 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RegisterNotificationAtSchedulerService {
 
-  private final AppointmentRepository appointmentRepository;
-  private final RegisterAllNotificationAtSchedulerService registerAllNotificationAtSchedulerService;
-  private final NotificationInfoFactory notificationInfoFactory;
+    private final AppointmentRepository appointmentRepository;
+    private final RegisterAllNotificationAtSchedulerService
+            registerAllNotificationAtSchedulerService;
+    private final NotificationInfoFactory notificationInfoFactory;
 
-  @Deprecated
-  @Transactional
-  public RegisterNotificationServiceResponse registerFcmMessageForNewAppointment(
-      RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request) {
-    Appointment newAppointment = createAppointmentBy(request);
+    @Deprecated
+    @Transactional
+    public RegisterNotificationServiceResponse registerFcmMessageForNewAppointment(
+            RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request) {
+        Appointment newAppointment = createAppointmentBy(request);
 
-    return registerFcmMessageForExistingAppointment(
-        RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest.from(
-            request, newAppointment));
-  }
+        return registerFcmMessageForExistingAppointment(
+                RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest.from(
+                        request, newAppointment));
+    }
 
-  @Transactional
-  public RegisterNotificationServiceResponse registerFcmMessageForExistingAppointment(
-      RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest request) {
-    Appointment appointment = request.getAppointment();
+    @Transactional
+    public RegisterNotificationServiceResponse registerFcmMessageForExistingAppointment(
+            RegisterFcmMessageForExistingAppointmentAtSchedulerServiceRequest request) {
+        Appointment appointment = request.getAppointment();
 
-    Map<NotificationStep, Instant> targetTimeMap =
-        notificationInfoFactory.createTargetTimeMap(
-            request.getPreparationTimeInstant(),
-            request.getMovingTimeInstant(),
-            request.getAppointmentTimeInstant());
+        Map<NotificationStep, Instant> targetTimeMap =
+                notificationInfoFactory.createTargetTimeMap(
+                        request.getPreparationTimeInstant(),
+                        request.getMovingTimeInstant(),
+                        request.getAppointmentTimeInstant());
 
-    registerAllNotificationAtSchedulerService.register(appointment, targetTimeMap);
+        registerAllNotificationAtSchedulerService.register(appointment, targetTimeMap);
 
-    return RegisterNotificationServiceResponse.builder()
-        .appointment(appointment)
-        .notifications(appointment.getFcmNotifications())
-        .build();
-  }
+        return RegisterNotificationServiceResponse.builder()
+                .appointment(appointment)
+                .notifications(appointment.getFcmNotifications())
+                .build();
+    }
 
-  private Appointment createAppointmentBy(
-      RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request) {
-    Appointment appointment =
-        Appointment.builder()
-            .appointmentName(request.getAppointmentName())
-            .clientId(request.getClientId())
-            .deviceToken(request.getDeviceToken())
-            .appointmentTime(request.getAppointmentTime().toLocalTime())
-            .movingDuration(Duration.between(request.getMovingTime(), request.getAppointmentTime()))
-            .preparationDuration(
-                Duration.between(request.getPreparationTime(), request.getMovingTime()))
-            .repeatingDayOfWeeks(new ArrayList<>())
-            .build();
+    private Appointment createAppointmentBy(
+            RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request) {
+        Appointment appointment =
+                Appointment.builder()
+                        .appointmentName(request.getAppointmentName())
+                        .clientId(request.getClientId())
+                        .deviceToken(request.getDeviceToken())
+                        .appointmentTime(request.getAppointmentTime().toLocalTime())
+                        .movingDuration(
+                                Duration.between(
+                                        request.getMovingTime(), request.getAppointmentTime()))
+                        .preparationDuration(
+                                Duration.between(
+                                        request.getPreparationTime(), request.getMovingTime()))
+                        .repeatingDayOfWeeks(new ArrayList<>())
+                        .build();
 
-    return appointmentRepository.save(appointment);
-  }
+        return appointmentRepository.save(appointment);
+    }
 }

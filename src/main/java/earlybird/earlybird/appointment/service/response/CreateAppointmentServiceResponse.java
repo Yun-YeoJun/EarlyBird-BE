@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 public class CreateAppointmentServiceResponse {
 
-  private final Long createdAppointmentId;
+    private final Long createdAppointmentId;
 
-  @Builder
-  private CreateAppointmentServiceResponse(Long createdAppointmentId) {
-    this.createdAppointmentId = createdAppointmentId;
-  }
+    @Builder
+    private CreateAppointmentServiceResponse(Long createdAppointmentId) {
+        this.createdAppointmentId = createdAppointmentId;
+    }
 }

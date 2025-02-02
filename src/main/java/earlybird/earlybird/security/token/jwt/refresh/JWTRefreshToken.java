@@ -8,19 +8,19 @@ import jakarta.persistence.Id;
 @Entity
 public class JWTRefreshToken {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  private String accountId;
-  private String refreshToken;
-  private String expiration;
+    private String accountId;
+    private String refreshToken;
+    private String expiration;
 
-  public JWTRefreshToken() {}
+    public JWTRefreshToken() {}
 
-  public JWTRefreshToken(String accountId, String refreshToken, String expiration) {
-    this.accountId = accountId;
-    this.refreshToken = refreshToken;
-    this.expiration = expiration;
-  }
+    public JWTRefreshToken(String accountId, String refreshToken, String expiration) {
+        this.accountId = accountId;
+        this.refreshToken = refreshToken;
+        this.expiration = expiration;
+    }
 }

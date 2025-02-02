@@ -7,5 +7,5 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class VisitEventLoggingServiceRequest {
 
-  private final String clientId;
+    private final String clientId;
 }

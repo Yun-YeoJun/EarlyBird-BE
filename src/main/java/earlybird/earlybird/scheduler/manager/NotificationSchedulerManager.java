@@ -3,9 +3,9 @@ package earlybird.earlybird.scheduler.manager;
 import earlybird.earlybird.scheduler.manager.request.AddNotificationToSchedulerServiceRequest;
 
 public interface NotificationSchedulerManager {
-  void init();
+    void init();
 
-  void add(AddNotificationToSchedulerServiceRequest request);
+    void add(AddNotificationToSchedulerServiceRequest request);
 
-  void remove(Long notificationId);
+    void remove(Long notificationId);
 }
