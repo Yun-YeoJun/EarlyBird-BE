@@ -20,36 +20,40 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class AppointmentController {
 
-    private final CreateAppointmentService createAppointmentService;
-    private final UpdateAppointmentService updateAppointmentService;
-    private final DeleteAppointmentService deleteAppointmentService;
+  private final CreateAppointmentService createAppointmentService;
+  private final UpdateAppointmentService updateAppointmentService;
+  private final DeleteAppointmentService deleteAppointmentService;
 
-    @PostMapping
-    public ResponseEntity<CreateAppointmentResponse> createAppointment(@Valid @RequestBody CreateAppointmentRequest request) {
+  @PostMapping
+  public ResponseEntity<CreateAppointmentResponse> createAppointment(
+      @Valid @RequestBody CreateAppointmentRequest request) {
 
-        CreateAppointmentServiceRequest serviceRequest = request.toCreateAppointmentServiceRequest();
-        CreateAppointmentServiceResponse serviceResponse = createAppointmentService.create(serviceRequest);
+    CreateAppointmentServiceRequest serviceRequest = request.toCreateAppointmentServiceRequest();
+    CreateAppointmentServiceResponse serviceResponse =
+        createAppointmentService.create(serviceRequest);
 
-        return ResponseEntity.ok(CreateAppointmentResponse.from(serviceResponse));
-    }
+    return ResponseEntity.ok(CreateAppointmentResponse.from(serviceResponse));
+  }
 
-    @PatchMapping
-    public ResponseEntity<Void> updateAppointment(@Valid @RequestBody UpdateAppointmentRequest request) {
+  @PatchMapping
+  public ResponseEntity<Void> updateAppointment(
+      @Valid @RequestBody UpdateAppointmentRequest request) {
 
-        UpdateAppointmentServiceRequest serviceRequest = request.toUpdateAppointmentServiceRequest();
-        updateAppointmentService.update(serviceRequest);
+    UpdateAppointmentServiceRequest serviceRequest = request.toUpdateAppointmentServiceRequest();
+    updateAppointmentService.update(serviceRequest);
 
-        return ResponseEntity.ok().build();
-    }
+    return ResponseEntity.ok().build();
+  }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteAppointment(
-            @RequestHeader("appointmentId") Long appointmentId, @RequestHeader("clientId") String clientId
-    ) {
+  @DeleteMapping
+  public ResponseEntity<Void> deleteAppointment(
+      @RequestHeader("appointmentId") Long appointmentId,
+      @RequestHeader("clientId") String clientId) {
 
-        DeleteAppointmentServiceRequest serviceRequest = new DeleteAppointmentServiceRequest(clientId, appointmentId);
-        deleteAppointmentService.delete(serviceRequest);
+    DeleteAppointmentServiceRequest serviceRequest =
+        new DeleteAppointmentServiceRequest(clientId, appointmentId);
+    deleteAppointmentService.delete(serviceRequest);
 
-        return ResponseEntity.noContent().build();
-    }
+    return ResponseEntity.noContent().build();
+  }
 }

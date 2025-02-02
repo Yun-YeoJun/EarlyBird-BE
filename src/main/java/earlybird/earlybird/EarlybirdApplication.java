@@ -10,8 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 public class EarlybirdApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(EarlybirdApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(EarlybirdApplication.class, args);
+  }
 }

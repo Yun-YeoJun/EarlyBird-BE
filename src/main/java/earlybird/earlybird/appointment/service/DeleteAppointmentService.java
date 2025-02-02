@@ -11,14 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DeleteAppointmentService {
 
-    private final FindAppointmentService findAppointmentService;
-    private final DeregisterNotificationService deregisterNotificationService;
+  private final FindAppointmentService findAppointmentService;
+  private final DeregisterNotificationService deregisterNotificationService;
 
-    @Transactional
-    public void delete(DeleteAppointmentServiceRequest request) {
-        Appointment appointment = findAppointmentService.findBy(request.getAppointmentId(), request.getClientId());
-        deregisterNotificationService.deregister(request.toDeregisterFcmMessageAtSchedulerServiceRequest());
-        appointment.setRepeatingDaysEmpty();
-        appointment.setDeleted();
-    }
+  @Transactional
+  public void delete(DeleteAppointmentServiceRequest request) {
+    Appointment appointment =
+        findAppointmentService.findBy(request.getAppointmentId(), request.getClientId());
+    deregisterNotificationService.deregister(
+        request.toDeregisterFcmMessageAtSchedulerServiceRequest());
+    appointment.setRepeatingDaysEmpty();
+    appointment.setDeleted();
+  }
 }

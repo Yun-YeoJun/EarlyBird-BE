@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class VisitEventLogService {
 
-    private final VisitEventLogRepository visitEventLogRepository;
+  private final VisitEventLogRepository visitEventLogRepository;
 
-    @Transactional
-    public void create(VisitEventLoggingServiceRequest request) {
-        visitEventLogRepository.save(new VisitEventLog(request.getClientId()));
-    }
+  @Transactional
+  public void create(VisitEventLoggingServiceRequest request) {
+    visitEventLogRepository.save(new VisitEventLog(request.getClientId()));
+  }
 }

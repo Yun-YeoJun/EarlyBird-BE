@@ -1,29 +1,31 @@
-//package earlybird.earlybird.scheduler.notification.fcm.service;
+// package earlybird.earlybird.scheduler.notification.fcm.service;
 //
-//import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
-//import earlybird.earlybird.scheduler.notification.fcm.service.register.request.RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest;
-//import earlybird.earlybird.messaging.request.SendMessageByTokenServiceRequest;
-//import earlybird.earlybird.scheduler.notification.fcm.service.register.response.RegisterFcmMessageAtSchedulerServiceResponse;
-//import org.awaitility.Awaitility;
-//import org.junit.jupiter.api.AfterEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.test.context.ActiveProfiles;
+// import earlybird.earlybird.scheduler.notification.fcm.domain.FcmNotificationRepository;
+// import
+// earlybird.earlybird.scheduler.notification.fcm.service.register.request.RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest;
+// import earlybird.earlybird.messaging.request.SendMessageByTokenServiceRequest;
+// import
+// earlybird.earlybird.scheduler.notification.fcm.service.register.response.RegisterFcmMessageAtSchedulerServiceResponse;
+// import org.awaitility.Awaitility;
+// import org.junit.jupiter.api.AfterEach;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.boot.test.mock.mockito.MockBean;
+// import org.springframework.test.context.ActiveProfiles;
 //
-//import java.time.LocalDateTime;
-//import java.util.concurrent.ExecutionException;
-//import java.util.concurrent.TimeUnit;
+// import java.time.LocalDateTime;
+// import java.util.concurrent.ExecutionException;
+// import java.util.concurrent.TimeUnit;
 //
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.Mockito.*;
+// import static org.assertj.core.api.Assertions.assertThat;
+// import static org.mockito.ArgumentMatchers.any;
+// import static org.mockito.Mockito.*;
 //
-//@ActiveProfiles("test")
-//@SpringBootTest
-//class RegisterNotificationAtSchedulerServiceTest {
+// @ActiveProfiles("test")
+// @SpringBootTest
+// class RegisterNotificationAtSchedulerServiceTest {
 //
 //    @MockBean
 //    private SendMessageToFcmService sendMessageToFcmService;
@@ -48,7 +50,8 @@
 //        // given
 //        int targetSecond = 2;
 //        LocalDateTime targetTime = LocalDateTime.now().plusSeconds(targetSecond);
-//        RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request = RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest.builder()
+//        RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request =
+// RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest.builder()
 //                .clientId("clientId")
 //                .deviceToken("deviceToken")
 //                .appointmentName("appointmentName")
@@ -65,7 +68,8 @@
 //                .atMost(targetSecond + 1, TimeUnit.SECONDS)
 //                .untilAsserted(() -> {
 //                    verify(sendMessageToFcmService,
-//                            times(1)).sendMessageByToken(any(SendMessageByTokenServiceRequest.class));
+//
+// times(1)).sendMessageByToken(any(SendMessageByTokenServiceRequest.class));
 //                });
 //    }
 //
@@ -73,7 +77,8 @@
 //    @Test
 //    void registerFcmMessageForNewAppointment() throws ExecutionException, InterruptedException {
 //        // given
-//        RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request = RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest.builder()
+//        RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request =
+// RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest.builder()
 //                .clientId("clientId")
 //                .deviceToken("deviceToken")
 //                .appointmentName("appointmentName")
@@ -83,7 +88,8 @@
 //                .build();
 //
 //        // when
-//        RegisterFcmMessageAtSchedulerServiceResponse response = registerNotificationAtSchedulerService.registerFcmMessageForNewAppointment(request);
+//        RegisterFcmMessageAtSchedulerServiceResponse response =
+// registerNotificationAtSchedulerService.registerFcmMessageForNewAppointment(request);
 //
 //        // then
 //        assertThat(response.getNotifications()).hasSize(7);
@@ -93,7 +99,8 @@
 //    @Test
 //    void targetTimeIsBeforeNow() {
 //        // given
-//        RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request = RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest.builder()
+//        RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest request =
+// RegisterFcmMessageForNewAppointmentAtSchedulerServiceRequest.builder()
 //                .clientId("clientId")
 //                .deviceToken("deviceToken")
 //                .appointmentName("appointmentName")
@@ -103,10 +110,11 @@
 //                .build();
 //
 //        // when
-//        RegisterFcmMessageAtSchedulerServiceResponse response = registerNotificationAtSchedulerService.registerFcmMessageForNewAppointment(request);
+//        RegisterFcmMessageAtSchedulerServiceResponse response =
+// registerNotificationAtSchedulerService.registerFcmMessageForNewAppointment(request);
 //
 //        // then
 //        assertThat(response.getNotifications()).hasSize(0);
 //    }
 //
-//}
+// }

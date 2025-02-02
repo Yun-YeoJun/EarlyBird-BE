@@ -12,22 +12,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class FindAppointmentService {
 
-    private final AppointmentRepository appointmentRepository;
+  private final AppointmentRepository appointmentRepository;
 
-    public Appointment findBy(Long appointmentId, String clientId) {
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(AppointmentNotFoundException::new);
+  public Appointment findBy(Long appointmentId, String clientId) {
+    Appointment appointment =
+        appointmentRepository
+            .findById(appointmentId)
+            .orElseThrow(AppointmentNotFoundException::new);
 
-        if (!appointment.getClientId().equals(clientId))
-            throw new AppointmentNotFoundException();
+    if (!appointment.getClientId().equals(clientId)) throw new AppointmentNotFoundException();
 
-        if (appointment.isDeleted())
-            throw new DeletedAppointmentException();
+    if (appointment.isDeleted()) throw new DeletedAppointmentException();
 
-        return appointment;
-    }
+    return appointment;
+  }
 
-    public Appointment findBy(DeregisterFcmMessageAtSchedulerServiceRequest request) {
-        return findBy(request.getAppointmentId(), request.getClientId());
-    }
+  public Appointment findBy(DeregisterFcmMessageAtSchedulerServiceRequest request) {
+    return findBy(request.getAppointmentId(), request.getClientId());
+  }
 }

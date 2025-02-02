@@ -14,15 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ArriveOnTimeEventLogService {
 
-    private final ArriveOnTimeEventLogRepository arriveOnTimeEventLogRepository;
-    private final AppointmentRepository appointmentRepository;
+  private final ArriveOnTimeEventLogRepository arriveOnTimeEventLogRepository;
+  private final AppointmentRepository appointmentRepository;
 
-    @Transactional
-    public void create(ArriveOnTimeEventLoggingServiceRequest request) {
-        Long appointmentId = request.getAppointmentId();
-        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(AppointmentNotFoundException::new);
+  @Transactional
+  public void create(ArriveOnTimeEventLoggingServiceRequest request) {
+    Long appointmentId = request.getAppointmentId();
+    Appointment appointment =
+        appointmentRepository
+            .findById(appointmentId)
+            .orElseThrow(AppointmentNotFoundException::new);
 
-        ArriveOnTimeEventLog log = new ArriveOnTimeEventLog(appointment);
-        arriveOnTimeEventLogRepository.save(log);
-    }
+    ArriveOnTimeEventLog log = new ArriveOnTimeEventLog(appointment);
+    arriveOnTimeEventLogRepository.save(log);
+  }
 }

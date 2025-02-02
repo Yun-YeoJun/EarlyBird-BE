@@ -14,22 +14,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CreateAuthFeedbackCommentService {
 
-    private final FeedbackCommentRepository feedbackCommentRepository;
-    private final UserRepository userRepository;
+  private final FeedbackCommentRepository feedbackCommentRepository;
+  private final UserRepository userRepository;
 
-    @Transactional
-    public void create(CreateAuthFeedbackCommentServiceRequest request) {
+  @Transactional
+  public void create(CreateAuthFeedbackCommentServiceRequest request) {
 
-        Long userId = request.getUserAccountInfoDTO().getId();
+    Long userId = request.getUserAccountInfoDTO().getId();
 
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        FeedbackComment feedbackComment = FeedbackComment.builder()
-                .comment(request.getComment())
-                .user(user)
-                .createdTimeAtClient(request.getCreatedAt())
-                .build();
+    FeedbackComment feedbackComment =
+        FeedbackComment.builder()
+            .comment(request.getComment())
+            .user(user)
+            .createdTimeAtClient(request.getCreatedAt())
+            .build();
 
-        feedbackCommentRepository.save(feedbackComment);
-    }
+    feedbackCommentRepository.save(feedbackComment);
+  }
 }

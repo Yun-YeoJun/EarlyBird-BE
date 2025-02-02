@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class DeregisterFcmMessageAtSchedulerServiceRequest {
-    private String clientId;
-    private Long appointmentId;
-    private NotificationStatus targetNotificationStatus;
+  private String clientId;
+  private Long appointmentId;
+  private NotificationStatus targetNotificationStatus;
 }

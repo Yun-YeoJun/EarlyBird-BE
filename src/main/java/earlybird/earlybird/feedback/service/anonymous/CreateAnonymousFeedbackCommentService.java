@@ -11,16 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CreateAnonymousFeedbackCommentService {
 
-    private final FeedbackCommentRepository feedbackCommentRepository;
+  private final FeedbackCommentRepository feedbackCommentRepository;
 
-    @Transactional
-    public void create(CreateAnonymousFeedbackCommentServiceRequest request) {
-        FeedbackComment feedbackComment = FeedbackComment.builder()
-                .comment(request.getComment())
-                .clientId(request.getClientId())
-                .createdTimeAtClient(request.getCreatedAt())
-                .build();
+  @Transactional
+  public void create(CreateAnonymousFeedbackCommentServiceRequest request) {
+    FeedbackComment feedbackComment =
+        FeedbackComment.builder()
+            .comment(request.getComment())
+            .clientId(request.getClientId())
+            .createdTimeAtClient(request.getCreatedAt())
+            .build();
 
-        feedbackCommentRepository.save(feedbackComment);
-    }
+    feedbackCommentRepository.save(feedbackComment);
+  }
 }

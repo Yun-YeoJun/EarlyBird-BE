@@ -1,14 +1,14 @@
-//package earlybird.earlybird.scheduler.notification.fcm.domain;
+// package earlybird.earlybird.scheduler.notification.fcm.domain;
 //
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
 //
-//import java.time.LocalDateTime;
+// import java.time.LocalDateTime;
 //
-//import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus.COMPLETED;
-//import static org.assertj.core.api.Assertions.assertThat;
+// import static earlybird.earlybird.scheduler.notification.fcm.domain.NotificationStatus.COMPLETED;
+// import static org.assertj.core.api.Assertions.assertThat;
 //
-//class FcmNotificationTest {
+// class FcmNotificationTest {
 //
 //    @DisplayName("알림 발송 성공 상태를 업데이트한다.")
 //    @Test
@@ -37,4 +37,4 @@
 //        // then
 //        assertThat(notification.getStatus()).isEqualTo(COMPLETED);
 //    }
-//}
+// }

@@ -6,5 +6,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class ArriveOnTimeEventLoggingServiceRequest {
-    private final Long appointmentId;
+  private final Long appointmentId;
 }

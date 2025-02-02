@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class VisitEventLoggingRequest {
 
-    private String clientId;
+  private String clientId;
 }
