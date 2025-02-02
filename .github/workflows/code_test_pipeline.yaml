@@ -61,6 +61,7 @@ jobs:
 
   formatting:
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
