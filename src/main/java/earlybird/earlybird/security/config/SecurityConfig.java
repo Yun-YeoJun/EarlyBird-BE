@@ -17,9 +17,12 @@ import earlybird.earlybird.security.token.oauth2.service.CreateOAuth2TokenServic
 import earlybird.earlybird.security.token.oauth2.service.DeleteOAuth2TokenService;
 import earlybird.earlybird.user.dto.UserAccountInfoDTO;
 import earlybird.earlybird.user.repository.UserRepository;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -57,92 +60,120 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.authenticationProvider(new OAuth2AuthenticationProvider(userDetailsService, oAuth2UserJoinService));
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(
+                new OAuth2AuthenticationProvider(userDetailsService, oAuth2UserJoinService));
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
-        http
-                .authenticationManager(authenticationManager);
+        http.authenticationManager(authenticationManager);
 
-
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/feedbacks").permitAll()
-                        .anyRequest().authenticated()
+        http.authorizeHttpRequests(
+                auth ->
+                        auth
+                                //                        .anyRequest().authenticated()
+                                .anyRequest()
+                                .permitAll()
+                // TODO : 베타 테스트 기간에만 permitAll -> 로그인 기능 추가되면 authenticated()로 변경
                 );
 
-        OAuth2AuthenticationFilter oAuth2AuthenticationFilter
-                = new OAuth2AuthenticationFilter(createJWTAccessTokenService, createJWTRefreshTokenService, JWTRefreshTokenToCookieService, createOAuth2TokenService, deleteOAuth2TokenService);
+        OAuth2AuthenticationFilter oAuth2AuthenticationFilter =
+                new OAuth2AuthenticationFilter(
+                        createJWTAccessTokenService,
+                        createJWTRefreshTokenService,
+                        JWTRefreshTokenToCookieService,
+                        createOAuth2TokenService,
+                        deleteOAuth2TokenService);
         oAuth2AuthenticationFilter.setAuthenticationManager(authenticationManager);
 
-        http
-                .addFilterAt(oAuth2AuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(oAuth2AuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        JWTReissueAuthenticationFilter jwtReissueAuthenticationFilter
-                = new JWTReissueAuthenticationFilter(createJWTAccessTokenService, createJWTRefreshTokenService, JWTRefreshTokenRepository, saveJWTRefreshTokenService, JWTRefreshTokenToCookieService);
-        ProviderManager jwtReissueAuthFilterProviderManager = new ProviderManager(new JWTReissueAuthenticationProvider(jwtUtil, userRepository));
-        jwtReissueAuthenticationFilter.setAuthenticationManager(jwtReissueAuthFilterProviderManager);
+        JWTReissueAuthenticationFilter jwtReissueAuthenticationFilter =
+                new JWTReissueAuthenticationFilter(
+                        createJWTAccessTokenService,
+                        createJWTRefreshTokenService,
+                        JWTRefreshTokenRepository,
+                        saveJWTRefreshTokenService,
+                        JWTRefreshTokenToCookieService);
+        ProviderManager jwtReissueAuthFilterProviderManager =
+                new ProviderManager(new JWTReissueAuthenticationProvider(jwtUtil, userRepository));
+        jwtReissueAuthenticationFilter.setAuthenticationManager(
+                jwtReissueAuthFilterProviderManager);
 
         http.addFilterBefore(jwtReissueAuthenticationFilter, OAuth2AuthenticationFilter.class);
 
-        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(jwtUtil, userRepository);
+        JWTAuthenticationFilter jwtAuthenticationFilter =
+                new JWTAuthenticationFilter(jwtUtil, userRepository);
 
-        http
-                .addFilterAfter(jwtAuthenticationFilter, OAuth2AuthenticationFilter.class);
+        // TODO: 베타 테스트 이후 살려놓기
+        //        http
+        //                .addFilterAfter(jwtAuthenticationFilter,
+        // OAuth2AuthenticationFilter.class);
 
-        http
-                .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/api/v1/logout", "POST"))
-                        .logoutSuccessHandler(((request, response, authentication) -> {
-                            UserAccountInfoDTO userInfo = ((OAuth2UserDetails) authentication.getPrincipal()).getUserAccountInfoDTO();
-                            deleteOAuth2TokenService.deleteByUserAccountInfoDTO(userInfo);
-                        }))
-                        .deleteCookies("JSESSIONID", "refresh")
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
-                        .addLogoutHandler(((request, response, authentication) -> {
-                            Cookie[] cookies = request.getCookies();
+        http.logout(
+                logout ->
+                        logout.logoutRequestMatcher(
+                                        new AntPathRequestMatcher("/api/v1/logout", "POST"))
+                                .logoutSuccessHandler(
+                                        ((request, response, authentication) -> {
+                                            UserAccountInfoDTO userInfo =
+                                                    ((OAuth2UserDetails)
+                                                                    authentication.getPrincipal())
+                                                            .getUserAccountInfoDTO();
+                                            deleteOAuth2TokenService.deleteByUserAccountInfoDTO(
+                                                    userInfo);
+                                        }))
+                                .deleteCookies("JSESSIONID", "refresh")
+                                .invalidateHttpSession(true)
+                                .clearAuthentication(true)
+                                .addLogoutHandler(
+                                        ((request, response, authentication) -> {
+                                            Cookie[] cookies = request.getCookies();
 
-                            for (Cookie cookie : cookies) {
-                                if (cookie.getName().equals("refresh")) {
-                                    String refresh = cookie.getValue();
-                                    JWTRefreshTokenRepository.deleteByRefreshToken(refresh);
-                                }
-                            }
-                        }))
-                );
+                                            for (Cookie cookie : cookies) {
+                                                if (cookie.getName().equals("refresh")) {
+                                                    String refresh = cookie.getValue();
+                                                    JWTRefreshTokenRepository.deleteByRefreshToken(
+                                                            refresh);
+                                                }
+                                            }
+                                        })));
 
-        http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.sessionManagement(
+                (session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http
-                .formLogin(AbstractHttpConfigurer::disable)
+        http.formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable);
 
-        http
-                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+        http.cors(
+                corsCustomizer ->
+                        corsCustomizer.configurationSource(
+                                new CorsConfigurationSource() {
 
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                                    @Override
+                                    public CorsConfiguration getCorsConfiguration(
+                                            HttpServletRequest request) {
 
-                        CorsConfiguration configuration = new CorsConfiguration();
+                                        CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
+                                        configuration.setAllowedOriginPatterns(
+                                                Collections.singletonList("*"));
+                                        configuration.setAllowedMethods(
+                                                Collections.singletonList("*"));
+                                        configuration.setAllowCredentials(true);
+                                        configuration.setAllowedHeaders(
+                                                Collections.singletonList("*"));
+                                        configuration.setMaxAge(3600L);
 
-                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+                                        configuration.setExposedHeaders(
+                                                Collections.singletonList("Set-Cookie"));
+                                        configuration.setExposedHeaders(
+                                                Collections.singletonList("Authorization"));
 
-                        return configuration;
-                    }
-                }));
-
-
+                                        return configuration;
+                                    }
+                                }));
 
         return http.build();
     }

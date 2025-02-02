@@ -1,12 +1,14 @@
 package earlybird.earlybird.security.token.oauth2;
 
+import static lombok.AccessLevel.PRIVATE;
+
 import earlybird.earlybird.security.enums.OAuth2ProviderName;
 import earlybird.earlybird.user.entity.User;
+
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Builder
 @AllArgsConstructor(access = PRIVATE)
@@ -28,9 +30,7 @@ public class OAuth2Token {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public OAuth2Token() {
-
-    }
+    public OAuth2Token() {}
 
     public OAuth2TokenDTO toOAuth2TokenDTO() {
 

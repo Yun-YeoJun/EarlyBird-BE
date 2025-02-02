@@ -1,7 +1,9 @@
 package earlybird.earlybird.security.authentication.oauth2.user;
 
 import earlybird.earlybird.user.dto.UserAccountInfoDTO;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

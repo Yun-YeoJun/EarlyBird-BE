@@ -1,8 +1,11 @@
 package earlybird.earlybird.user.entity;
 
+import earlybird.earlybird.common.LocalDateTimeUtil;
 import earlybird.earlybird.security.authentication.oauth2.dto.OAuth2ServerResponse;
 import earlybird.earlybird.user.dto.UserAccountInfoDTO;
+
 import jakarta.persistence.*;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,9 +21,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * 스프링 시큐리티에서 사용하는 값
-     */
+    /** 스프링 시큐리티에서 사용하는 값 */
     @Column(name = "user_account_id", nullable = false, unique = true)
     private String accountId;
 
@@ -37,7 +38,13 @@ public class User {
     private LocalDateTime createdAt;
 
     @Builder
-    private User(Long id, String accountId, String name, String email, String role, LocalDateTime createdAt) {
+    private User(
+            Long id,
+            String accountId,
+            String name,
+            String email,
+            String role,
+            LocalDateTime createdAt) {
         this.id = id;
         this.accountId = accountId;
         this.name = name;
@@ -51,12 +58,10 @@ public class User {
         this.name = userInfo.getName();
         this.email = userInfo.getEmail();
         this.role = "USER";
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTimeUtil.getLocalDateTimeNow();
     }
 
-    public User() {
-
-    }
+    public User() {}
 
     public UserAccountInfoDTO toUserAccountInfoDTO() {
         return UserAccountInfoDTO.builder()

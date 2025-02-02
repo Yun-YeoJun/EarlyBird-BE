@@ -1,6 +1,7 @@
 package earlybird.earlybird.error.exception;
 
 import earlybird.earlybird.error.ErrorCode;
+
 import lombok.Getter;
 
 @Getter

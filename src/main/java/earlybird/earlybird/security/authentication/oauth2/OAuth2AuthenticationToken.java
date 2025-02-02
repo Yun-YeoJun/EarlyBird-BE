@@ -19,7 +19,10 @@ public class OAuth2AuthenticationToken extends AbstractAuthenticationToken {
      */
     private final Object credentials;
 
-    public OAuth2AuthenticationToken(Collection<? extends GrantedAuthority> authorities, Object principal, Object credentials) {
+    public OAuth2AuthenticationToken(
+            Collection<? extends GrantedAuthority> authorities,
+            Object principal,
+            Object credentials) {
         super(authorities);
         this.principal = principal;
         this.credentials = credentials;

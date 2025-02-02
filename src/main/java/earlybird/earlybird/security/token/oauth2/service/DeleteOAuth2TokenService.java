@@ -1,11 +1,13 @@
 package earlybird.earlybird.security.token.oauth2.service;
 
+import earlybird.earlybird.error.exception.UserNotFoundException;
 import earlybird.earlybird.security.token.oauth2.OAuth2TokenRepository;
 import earlybird.earlybird.user.dto.UserAccountInfoDTO;
 import earlybird.earlybird.user.entity.User;
 import earlybird.earlybird.user.repository.UserRepository;
-import earlybird.earlybird.error.exception.UserNotFoundException;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -25,7 +27,8 @@ public class DeleteOAuth2TokenService {
     }
 
     public void deleteByUserAccountInfoDTO(UserAccountInfoDTO userInfo) {
-        User user = userRepository.findById(userInfo.getId()).orElseThrow(UserNotFoundException::new);
+        User user =
+                userRepository.findById(userInfo.getId()).orElseThrow(UserNotFoundException::new);
         oAuth2TokenRepository.deleteByUser(user);
     }
 }

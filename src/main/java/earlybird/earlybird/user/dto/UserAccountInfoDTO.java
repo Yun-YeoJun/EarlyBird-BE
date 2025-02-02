@@ -2,7 +2,6 @@ package earlybird.earlybird.user.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Builder
@@ -15,8 +14,7 @@ public class UserAccountInfoDTO {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof UserAccountInfoDTO))
-            return false;
+        if (!(obj instanceof UserAccountInfoDTO)) return false;
         UserAccountInfoDTO other = (UserAccountInfoDTO) obj;
 
         return this.id == other.getId()

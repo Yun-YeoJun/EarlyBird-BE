@@ -1,6 +1,7 @@
 package earlybird.earlybird.security.token.jwt.refresh;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

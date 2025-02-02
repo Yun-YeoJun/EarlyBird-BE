@@ -6,12 +6,11 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 public class JWTReissueAuthenticationToken extends AbstractAuthenticationToken {
-    /**
-     * 인증 전: refresh 토큰
-     * 인증 성공 후: UserAccountInfoDTO 객체
-     */
+    /** 인증 전: refresh 토큰 인증 성공 후: UserAccountInfoDTO 객체 */
     private final Object principal;
-    public JWTReissueAuthenticationToken(Collection<? extends GrantedAuthority> authorities, Object principal) {
+
+    public JWTReissueAuthenticationToken(
+            Collection<? extends GrantedAuthority> authorities, Object principal) {
         super(authorities);
         this.principal = principal;
         setAuthenticated(true);

@@ -4,8 +4,11 @@ import earlybird.earlybird.security.token.jwt.JWTUtil;
 import earlybird.earlybird.user.dto.UserAccountInfoDTO;
 import earlybird.earlybird.user.entity.User;
 import earlybird.earlybird.user.repository.UserRepository;
+
 import io.jsonwebtoken.ExpiredJwtException;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -24,7 +27,8 @@ public class JWTReissueAuthenticationProvider implements AuthenticationProvider 
     private final UserRepository userRepository;
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication)
+            throws AuthenticationException {
         String refreshToken = (String) authentication.getPrincipal();
 
         if (refreshToken == null) {

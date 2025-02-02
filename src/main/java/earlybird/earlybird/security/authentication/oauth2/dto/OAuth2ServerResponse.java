@@ -1,8 +1,6 @@
 package earlybird.earlybird.security.authentication.oauth2.dto;
 
-/**
- * OAuth2 서버(ex. Google, Apple ...)의 응답을 담은 객체
- */
+/** OAuth2 서버(ex. Google, Apple ...)의 응답을 담은 객체 */
 public interface OAuth2ServerResponse {
 
     // 제공자 (Ex. naver, google, ...)

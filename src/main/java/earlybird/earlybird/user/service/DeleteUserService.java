@@ -1,10 +1,12 @@
 package earlybird.earlybird.user.service;
 
+import earlybird.earlybird.error.exception.UserNotFoundException;
 import earlybird.earlybird.user.dto.UserAccountInfoDTO;
 import earlybird.earlybird.user.entity.User;
 import earlybird.earlybird.user.repository.UserRepository;
-import earlybird.earlybird.error.exception.UserNotFoundException;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

@@ -5,12 +5,16 @@ import earlybird.earlybird.security.token.jwt.JWTUtil;
 import earlybird.earlybird.user.dto.UserAccountInfoDTO;
 import earlybird.earlybird.user.entity.User;
 import earlybird.earlybird.user.repository.UserRepository;
+
 import io.jsonwebtoken.ExpiredJwtException;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,12 +34,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        List<String> passUriList = Arrays.asList(
-                "/api/v1/login",
-                "/api/v1/logout",
-                "/api/v1/reissue"
-        );
+    protected void doFilterInternal(
+            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        List<String> passUriList =
+                Arrays.asList("/api/v1/login", "/api/v1/logout", "/api/v1/reissue");
 
         if (passUriList.contains(request.getRequestURI())) {
             filterChain.doFilter(request, response);
@@ -86,14 +89,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         UserAccountInfoDTO userAccountInfoDTO = user.toUserAccountInfoDTO();
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
 
-        OAuth2UserDetails oAuth2UserDetails = new OAuth2UserDetails(userAccountInfoDTO, authorities);
+        OAuth2UserDetails oAuth2UserDetails =
+                new OAuth2UserDetails(userAccountInfoDTO, authorities);
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                oAuth2UserDetails, null, oAuth2UserDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(
+                        oAuth2UserDetails, null, oAuth2UserDetails.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
     }
 }
-

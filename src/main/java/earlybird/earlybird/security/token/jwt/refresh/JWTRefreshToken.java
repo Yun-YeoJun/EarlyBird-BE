@@ -16,9 +16,7 @@ public class JWTRefreshToken {
     private String refreshToken;
     private String expiration;
 
-    public JWTRefreshToken() {
-
-    }
+    public JWTRefreshToken() {}
 
     public JWTRefreshToken(String accountId, String refreshToken, String expiration) {
         this.accountId = accountId;
