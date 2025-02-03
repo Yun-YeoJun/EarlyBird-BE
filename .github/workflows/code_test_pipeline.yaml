@@ -1,4 +1,4 @@
-name: Code Test Pipeline
+name: CI Pipeline
 on:
   pull_request:
     branches: ["dev", "main"]
